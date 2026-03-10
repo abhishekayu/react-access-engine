@@ -12,3 +12,5 @@ export { FeatureToggle } from './FeatureToggle';
 export type { FeatureToggleProps } from './FeatureToggle';
 export { Experiment } from './Experiment';
 export type { ExperimentProps } from './Experiment';
+export { Allow } from './Allow';
+export type { AllowProps } from './Allow';

@@ -7,7 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/react-access-control?color=blue&label=npm)](https://www.npmjs.com/package/react-access-control)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-access-control?label=minzipped)](https://bundlephobia.com/package/react-access-control)
 [![CI](https://github.com/abhishekayu/react-access-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/abhishekayu/react-access-engine/actions/workflows/ci.yml)
-[![codecov](https://img.shields.io/badge/tests-202%20passing-brightgreen)](https://github.com/abhishekayu/react-access-engine)
+[![codecov](https://img.shields.io/badge/tests-220%20passing-brightgreen)](https://github.com/abhishekayu/react-access-engine)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![license](https://img.shields.io/npm/l/react-access-control)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -22,14 +22,15 @@
 
 React apps cobble together homegrown RBAC, a feature flag service, ad-hoc plan gating, and manual A/B test wiring — each with its own provider, API, and blind spots.
 
-**react-access-control** replaces all of them with one system:
+**react-access-control** replaces all of them with one system — and keeps it simple:
 
 ```tsx
-<Can perform="billing:edit" on={{ ownerId: user.id }}>
-  <Feature name="new-invoice-editor" fallback={<LegacyEditor />}>
-    <InvoiceEditor />
-  </Feature>
-</Can>
+const { can, is, has, tier } = useAccess();
+
+can('edit'); // check permission
+is('admin'); // check role
+has('dark-mode'); // check feature flag
+tier('pro'); // check plan
 ```
 
 ## Features
@@ -69,21 +70,17 @@ yarn add react-access-control
 import { defineAccess } from 'react-access-control';
 
 const config = defineAccess({
-  roles: ['admin', 'editor', 'viewer'] as const,
-
+  roles: ['admin', 'editor', 'viewer'],
   permissions: {
-    admin: ['*'] as const,
-    editor: ['articles:read', 'articles:write', 'comments:*'] as const,
-    viewer: ['articles:read'] as const,
+    admin: ['*'],
+    editor: ['articles:read', 'articles:write'],
+    viewer: ['articles:read'],
   },
-
   features: {
-    'dark-mode': { enabled: true },
+    'dark-mode': true,
     'new-editor': { rolloutPercentage: 50 },
-    'analytics-v2': { enabled: true, allowedPlans: ['pro', 'enterprise'] },
   },
-
-  plans: ['free', 'starter', 'pro', 'enterprise'] as const,
+  plans: ['free', 'pro', 'enterprise'],
 });
 ```
 
@@ -93,61 +90,112 @@ const config = defineAccess({
 import { AccessProvider } from 'react-access-control';
 
 function App() {
-  const user = {
-    id: 'user-123',
-    roles: ['editor'] as const,
-    plan: 'pro' as const,
-  };
-
   return (
-    <AccessProvider config={config} user={user}>
+    <AccessProvider config={config} user={{ id: 'user-123', roles: ['editor'], plan: 'pro' }}>
       <Dashboard />
     </AccessProvider>
   );
 }
 ```
 
-### 3. Use components and hooks
+### 3. Use it
+
+**One hook — `useAccess()` — does everything:**
 
 ```tsx
-import { Can, Feature, usePermission, useFeature } from 'react-access-control';
+import { useAccess } from 'react-access-control';
 
 function Dashboard() {
-  const canManageUsers = usePermission('users:manage');
+  const { can, is, has, tier } = useAccess();
 
   return (
     <div>
-      <Can perform="articles:write">
-        <button>New Article</button>
-      </Can>
-
-      <Feature name="analytics-v2" fallback={<LegacyAnalytics />}>
-        <AnalyticsV2 />
-      </Feature>
-
-      {canManageUsers && <UserManagement />}
+      {can('articles:write') && <button>New Article</button>}
+      {is('admin') && <AdminPanel />}
+      {has('dark-mode') && <DarkModeToggle />}
+      {tier('pro') && <ProFeatures />}
     </div>
   );
 }
 ```
 
-## API Reference
-
-### Components
-
-#### `<AccessProvider>`
-
-Root provider. Initializes all engines and provides context.
+**Or use `<Allow>` — one component for all access control:**
 
 ```tsx
-<AccessProvider config={config} user={user}>
-  {children}
-</AccessProvider>
+import { Allow } from 'react-access-control';
+
+function Dashboard() {
+  return (
+    <div>
+      <Allow permission="articles:write">
+        <button>New Article</button>
+      </Allow>
+
+      <Allow role="admin">
+        <AdminPanel />
+      </Allow>
+
+      <Allow feature="dark-mode">
+        <DarkModeToggle />
+      </Allow>
+
+      <Allow plan="pro" fallback={<UpgradePrompt />}>
+        <ProFeatures />
+      </Allow>
+
+      {/* Combine conditions — all must pass */}
+      <Allow permission="analytics:view" feature="analytics-v2" plan="pro">
+        <AnalyticsDashboard />
+      </Allow>
+    </div>
+  );
+}
 ```
+
+That's it. One hook, one component. No need to memorize anything else.
+
+## API Reference
+
+### `useAccess()` — The Only Hook You Need
+
+```tsx
+const { can, is, has, tier, user, roles, permissions } = useAccess();
+```
+
+| Method                 | Returns   | Purpose                                            |
+| ---------------------- | --------- | -------------------------------------------------- |
+| `can(perm, resource?)` | `boolean` | Check a permission (with optional ABAC resource)   |
+| `is(role)`             | `boolean` | Check if user has a role                           |
+| `has(feature)`         | `boolean` | Check if a feature flag is enabled                 |
+| `tier(plan)`           | `boolean` | Check if user's plan meets or exceeds the required |
+
+Also exposes `user`, `roles`, `permissions`, `checkPermission`, `checkFeature`, `getExperiment` for advanced use.
+
+### `<Allow>` — The Only Component You Need
+
+```tsx
+<Allow
+  permission="edit" // permission check (optional)
+  role="admin" // role check (optional)
+  feature="dark-mode" // feature flag check (optional)
+  plan="pro" // plan tier check (optional)
+  on={{ ownerId: id }} // resource for ABAC (optional)
+  match="all" // "all" (default) or "any"
+  fallback={<Upgrade />} // shown when denied (optional)
+>
+  <ProtectedContent />
+</Allow>
+```
+
+Every prop is optional. Use only what you need. Combine freely.
+
+### Specialized Components
+
+For specific use cases, these focused components are also available:
 
 #### `<Can>`
 
-Permission gate. Renders children only if the user has the permission.
+Permission gate with roles, policy, and multi-permission support.
 
 ```tsx
 <Can perform="articles:edit" on={{ ownerId: article.ownerId }} fallback={<ReadOnly />}>
@@ -157,7 +205,7 @@ Permission gate. Renders children only if the user has the permission.
 
 #### `<Feature>`
 
-Feature flag gate. Renders children only if the feature is enabled.
+Feature flag gate.
 
 ```tsx
 <Feature name="new-editor" fallback={<LegacyEditor />}>
@@ -165,46 +213,9 @@ Feature flag gate. Renders children only if the feature is enabled.
 </Feature>
 ```
 
-#### `<AccessGate>`
-
-Multi-condition gate. Combines permission, feature, role, and plan checks.
-
-```tsx
-<AccessGate
-  permission="analytics:view"
-  feature="analytics-v2"
-  plan="pro"
-  roles={['admin', 'editor']}
-  mode="all"
-  fallback={<UpgradePrompt />}
->
-  <AnalyticsDashboard />
-</AccessGate>
-```
-
-#### `<PermissionGuard>`
-
-Route-level guard. Requires ALL specified permissions.
-
-```tsx
-<PermissionGuard permissions={['admin:access', 'users:manage']} fallback={<NotAuthorized />}>
-  <AdminPage />
-</PermissionGuard>
-```
-
-#### `<FeatureToggle>`
-
-Render prop for feature flags. Use when you need the state value.
-
-```tsx
-<FeatureToggle name="new-pricing">
-  {({ enabled }) => <PricingPage variant={enabled ? 'new' : 'legacy'} />}
-</FeatureToggle>
-```
-
 #### `<Experiment>`
 
-A/B testing component. Renders the assigned variant.
+A/B testing component.
 
 ```tsx
 <Experiment
@@ -217,18 +228,32 @@ A/B testing component. Renders the assigned variant.
 />
 ```
 
-### Hooks
+#### `<AccessGate>`
 
-| Hook                             | Returns                                       | Purpose                                         |
-| -------------------------------- | --------------------------------------------- | ----------------------------------------------- |
-| `useAccess()`                    | Full context                                  | Access all config, user data, and check methods |
-| `usePermission(perm, resource?)` | `boolean`                                     | Check a single permission                       |
-| `useRole()`                      | `{ roles, hasRole, hasAnyRole, hasAllRoles }` | Role checking utilities                         |
-| `useFeature(name)`               | `{ enabled, reason }`                         | Check a feature flag                            |
-| `usePolicy(perm, resource?)`     | `{ allowed, matchedRule, reason }`            | Evaluate policy rules                           |
-| `useExperiment(id)`              | `{ variant, active, experimentId }`           | Get experiment assignment                       |
-| `usePlan()`                      | `{ plan, hasPlanAccess }`                     | Subscription plan checks                        |
-| `useAccessDebug()`               | `AccessDebugInfo`                             | Debug metadata (when `debug: true`)             |
+Multi-condition gate (like `<Allow>` but with `mode` instead of `match`).
+
+#### `<PermissionGuard>`
+
+Route-level guard requiring ALL permissions to pass.
+
+#### `<FeatureToggle>`
+
+Render-prop variant of `<Feature>` — use when you need the `enabled` value.
+
+### Specialized Hooks
+
+When you need more detail than `useAccess()` provides:
+
+| Hook                             | Returns                                       | Purpose                             |
+| -------------------------------- | --------------------------------------------- | ----------------------------------- |
+| `usePermission(perm, resource?)` | `boolean`                                     | Check a single permission           |
+| `useRole()`                      | `{ roles, hasRole, hasAnyRole, hasAllRoles }` | Role checking utilities             |
+| `useFeature(name)`               | `{ enabled, reason }`                         | Check a feature flag with reason    |
+| `usePolicy(perm, resource?)`     | `{ allowed, matchedRule, reason }`            | Evaluate policy rules               |
+| `useExperiment(id)`              | `{ variant, active, experimentId }`           | Get experiment assignment           |
+| `usePlan()`                      | `{ plan, hasPlanAccess }`                     | Subscription plan checks            |
+| `useAccessDebug()`               | `AccessDebugInfo`                             | Debug metadata (when `debug: true`) |
+| `useAccessDebug()`               | `AccessDebugInfo`                             | Debug metadata (when `debug: true`) |
 
 ## Advanced Usage
 
@@ -370,54 +395,51 @@ console.log(debugInfo.lastFeatureEvals); // Recent feature evaluations
 
 ```tsx
 function SaasDashboard() {
+  const { can, tier } = useAccess();
+
   return (
     <AccessProvider config={saasConfig} user={currentUser}>
       <Sidebar>
-        <Can perform="dashboard:view">
+        <Allow permission="dashboard:view">
           <NavLink to="/dashboard">Dashboard</NavLink>
-        </Can>
-        <Can perform="analytics:view">
-          <Feature name="analytics-v2">
-            <NavLink to="/analytics">Analytics</NavLink>
-          </Feature>
-        </Can>
-        <Can perform="billing:manage">
+        </Allow>
+        <Allow permission="analytics:view" feature="analytics-v2">
+          <NavLink to="/analytics">Analytics</NavLink>
+        </Allow>
+        <Allow permission="billing:manage">
           <NavLink to="/billing">Billing</NavLink>
-        </Can>
+        </Allow>
       </Sidebar>
 
-      <AccessGate permission="settings:manage" plan="pro" fallback={<UpgradePrompt />}>
+      <Allow permission="settings:manage" plan="pro" fallback={<UpgradePrompt />}>
         <AdvancedSettings />
-      </AccessGate>
+      </Allow>
     </AccessProvider>
   );
 }
 ```
 
-### Admin Dashboard with Multi-Role
+### Admin Panel
 
 ```tsx
 const adminConfig = defineAccess({
-  roles: ['super-admin', 'admin', 'moderator', 'support'] as const,
+  roles: ['super-admin', 'admin', 'moderator', 'support'],
   permissions: {
-    'super-admin': ['*'] as const,
-    admin: ['users:*', 'content:*', 'settings:read'] as const,
-    moderator: ['content:read', 'content:moderate', 'reports:read'] as const,
-    support: ['users:read', 'tickets:*'] as const,
+    'super-admin': ['*'],
+    admin: ['users:*', 'content:*', 'settings:read'],
+    moderator: ['content:read', 'content:moderate', 'reports:read'],
+    support: ['users:read', 'tickets:*'],
   },
 });
 
 function AdminPanel() {
+  const { can } = useAccess();
+
   return (
-    <PermissionGuard
-      permissions={['users:read']}
-      fallback={<div>You do not have access to admin</div>}
-    >
+    <Allow permission="users:read" fallback={<div>No admin access</div>}>
       <UserTable />
-      <Can perform="users:delete">
-        <BulkDeleteButton />
-      </Can>
-    </PermissionGuard>
+      {can('users:delete') && <BulkDeleteButton />}
+    </Allow>
   );
 }
 ```
@@ -426,21 +448,20 @@ function AdminPanel() {
 
 ```tsx
 const config = defineAccess({
-  roles: ['user'] as const,
-  permissions: { user: ['app:access'] as const },
-  plans: ['free', 'pro', 'enterprise'] as const,
+  roles: ['user'],
+  permissions: { user: ['app:access'] },
+  plans: ['free', 'pro', 'enterprise'],
   features: {
     'export-csv': { enabled: true, allowedPlans: ['pro', 'enterprise'] },
     'api-access': { enabled: true, allowedPlans: ['enterprise'] },
-    'custom-branding': { enabled: true, allowedPlans: ['enterprise'] },
   },
 });
 
 function ExportButton() {
   return (
-    <Feature name="export-csv" fallback={<UpgradeBanner plan="pro" />}>
+    <Allow feature="export-csv" fallback={<UpgradeBanner plan="pro" />}>
       <button>Export CSV</button>
-    </Feature>
+    </Allow>
   );
 }
 ```
@@ -470,7 +491,7 @@ export default function RootLayout({ children }) {
 
 ## TypeScript
 
-The `defineAccess` factory infers literal types from your config:
+`defineAccess` works without `as const`. Add it when you want literal-type inference:
 
 ```typescript
 const config = defineAccess({
@@ -479,16 +500,13 @@ const config = defineAccess({
     admin: ['users:manage', 'billing:read'] as const,
     editor: ['articles:write'] as const,
   },
-  features: {
-    'dark-mode': true,
-    'new-editor': { enabled: true },
-  },
 });
 
 // InferRoles<typeof config> = 'admin' | 'editor'
 // InferPermissions<typeof config> = 'users:manage' | 'billing:read' | 'articles:write'
-// InferFeatures<typeof config> = 'dark-mode' | 'new-editor'
 ```
+
+Without `as const`, everything still works — you just get `string` instead of literal union types.
 
 ## Architecture
 

@@ -13,8 +13,7 @@
     "format:check": "prettier --check .",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo run build --filter='./packages/*' && changeset publish",
-    "prepare": "husky"
+    "release": "turbo run build --filter='./packages/*' && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",
@@ -25,7 +24,6 @@
     "typescript-eslint": "^8.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-config-prettier": "^10.0.0",
-    "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
     "prettier": "^3.4.0",
     "turbo": "^2.4.0",

@@ -298,3 +298,67 @@ describe('useAccessDebug', () => {
     expect(result.current).toHaveProperty('timestamp');
   });
 });
+
+// ---------------------------------------------------------------------------
+// useAccess — shorthand methods (can, is, has, tier)
+// ---------------------------------------------------------------------------
+
+describe('useAccess shorthand methods', () => {
+  it('can() checks permissions', () => {
+    const { result } = renderHook(() => useAccess(), {
+      wrapper: createWrapper(editorUser),
+    });
+
+    expect(result.current.can('articles:read')).toBe(true);
+    expect(result.current.can('articles:write')).toBe(true);
+    expect(result.current.can('billing:manage')).toBe(false);
+  });
+
+  it('can() with admin wildcard grants everything', () => {
+    const { result } = renderHook(() => useAccess(), {
+      wrapper: createWrapper(adminUser),
+    });
+
+    expect(result.current.can('literally:anything')).toBe(true);
+  });
+
+  it('is() checks roles', () => {
+    const { result } = renderHook(() => useAccess(), {
+      wrapper: createWrapper(editorUser),
+    });
+
+    expect(result.current.is('editor')).toBe(true);
+    expect(result.current.is('admin')).toBe(false);
+    expect(result.current.is('viewer')).toBe(false);
+  });
+
+  it('has() checks feature flags', () => {
+    const { result } = renderHook(() => useAccess(), {
+      wrapper: createWrapper(editorUser),
+    });
+
+    expect(result.current.has('dark-mode')).toBe(true);
+    expect(result.current.has('new-editor')).toBe(false);
+  });
+
+  it('tier() checks plan access', () => {
+    const { result } = renderHook(() => useAccess(), {
+      wrapper: createWrapper(editorUser),
+    });
+
+    // editorUser has plan 'pro', so free and pro should be accessible
+    expect(result.current.tier('free')).toBe(true);
+    expect(result.current.tier('pro')).toBe(true);
+    expect(result.current.tier('enterprise')).toBe(false);
+  });
+
+  it('tier() with enterprise plan has access to all tiers', () => {
+    const { result } = renderHook(() => useAccess(), {
+      wrapper: createWrapper(adminUser),
+    });
+
+    expect(result.current.tier('free')).toBe(true);
+    expect(result.current.tier('pro')).toBe(true);
+    expect(result.current.tier('enterprise')).toBe(true);
+  });
+});

@@ -9,6 +9,7 @@ import {
   PermissionGuard,
   FeatureToggle,
   Experiment,
+  Allow,
   defineAccess,
 } from '../src';
 import type { UserContext } from '../src/types';
@@ -565,5 +566,147 @@ describe('Hooks outside provider', () => {
       ),
     ).toThrow('[react-access-control]');
     spy.mockRestore();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// <Allow> — Unified access gate
+// ---------------------------------------------------------------------------
+
+describe('Allow', () => {
+  it('renders children when permission is granted', () => {
+    render(
+      <Wrapper user={adminUser}>
+        <Allow permission="articles:read">
+          <span data-testid="content">visible</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('content')).toBeInTheDocument();
+  });
+
+  it('renders fallback when permission is denied', () => {
+    render(
+      <Wrapper user={viewerUser}>
+        <Allow permission="billing:manage" fallback={<span data-testid="denied">no</span>}>
+          <span data-testid="content">visible</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.queryByTestId('content')).not.toBeInTheDocument();
+    expect(screen.getByTestId('denied')).toBeInTheDocument();
+  });
+
+  it('checks role', () => {
+    render(
+      <Wrapper user={adminUser}>
+        <Allow role="admin">
+          <span data-testid="admin">admin only</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('admin')).toBeInTheDocument();
+  });
+
+  it('denies wrong role', () => {
+    render(
+      <Wrapper user={viewerUser}>
+        <Allow role="admin" fallback={<span data-testid="nope">nope</span>}>
+          <span data-testid="admin">admin only</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.queryByTestId('admin')).not.toBeInTheDocument();
+    expect(screen.getByTestId('nope')).toBeInTheDocument();
+  });
+
+  it('checks feature flag', () => {
+    render(
+      <Wrapper user={adminUser}>
+        <Allow feature="dark-mode">
+          <span data-testid="dark">dark mode</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('dark')).toBeInTheDocument();
+  });
+
+  it('denies disabled feature', () => {
+    render(
+      <Wrapper user={adminUser}>
+        <Allow feature="new-editor" fallback={<span data-testid="off">off</span>}>
+          <span data-testid="on">on</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.queryByTestId('on')).not.toBeInTheDocument();
+    expect(screen.getByTestId('off')).toBeInTheDocument();
+  });
+
+  it('checks plan tier', () => {
+    render(
+      <Wrapper user={adminUser}>
+        <Allow plan="pro">
+          <span data-testid="pro">pro feature</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('pro')).toBeInTheDocument();
+  });
+
+  it('denies insufficient plan', () => {
+    render(
+      <Wrapper user={viewerUser}>
+        <Allow plan="enterprise" fallback={<span data-testid="upgrade">upgrade</span>}>
+          <span data-testid="ent">enterprise</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.queryByTestId('ent')).not.toBeInTheDocument();
+    expect(screen.getByTestId('upgrade')).toBeInTheDocument();
+  });
+
+  it('combines permission + role + feature (all mode)', () => {
+    render(
+      <Wrapper user={adminUser}>
+        <Allow permission="articles:read" role="admin" feature="dark-mode">
+          <span data-testid="all">all pass</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('all')).toBeInTheDocument();
+  });
+
+  it('fails combined checks when one fails (all mode)', () => {
+    render(
+      <Wrapper user={adminUser}>
+        <Allow permission="articles:read" role="admin" feature="new-editor">
+          <span data-testid="all">all pass</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.queryByTestId('all')).not.toBeInTheDocument();
+  });
+
+  it('passes combined checks when one passes (any mode)', () => {
+    render(
+      <Wrapper user={viewerUser}>
+        <Allow role="admin" permission="articles:read" match="any">
+          <span data-testid="any">any pass</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('any')).toBeInTheDocument();
+  });
+
+  it('renders children when no conditions specified', () => {
+    render(
+      <Wrapper user={viewerUser}>
+        <Allow>
+          <span data-testid="open">open</span>
+        </Allow>
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('open')).toBeInTheDocument();
   });
 });

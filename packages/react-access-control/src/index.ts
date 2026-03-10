@@ -49,6 +49,7 @@ export {
   PermissionGuard,
   FeatureToggle,
   Experiment,
+  Allow,
 } from './components';
 export type {
   CanProps,
@@ -57,6 +58,7 @@ export type {
   PermissionGuardProps,
   FeatureToggleProps,
   ExperimentProps,
+  AllowProps,
 } from './components';
 
 // Hooks
