@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AccessProvider } from 'react-access-control';
+import { AccessProvider } from 'react-access-engine';
 import { accessConfig } from '@/access-config';
 
 export function AccessWrapper({ children }: { children: React.ReactNode }) {

@@ -1,7 +1,7 @@
 {
-  "name": "@react-access-control/devtools",
+  "name": "@react-access-engine/devtools",
   "version": "0.1.0",
-  "description": "Development-only devtools overlay for react-access-control — visualize access decisions, feature flags, policies, and experiments in real time",
+  "description": "Development-only devtools overlay for react-access-engine — visualize access decisions, feature flags, policies, and experiments in real time",
   "author": "Abhishek",
   "license": "MIT",
   "homepage": "https://github.com/abhishekayu/react-access-engine#readme",
@@ -41,14 +41,14 @@
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
-    "react-access-control": "workspace:*"
+    "react-access-engine": "workspace:*"
   },
   "devDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "react-access-control": "workspace:*",
+    "react-access-engine": "workspace:*",
     "tsup": "^8.3.0",
     "typescript": "^5.7.0"
   }

@@ -1,18 +1,18 @@
-# @react-access-control/devtools
+# @react-access-engine/devtools
 
-Development-only debugging overlay for [react-access-control](../react-access-control). Visualize access decisions, feature flags, policies, experiments, and user state in real time.
+Development-only debugging overlay for [react-access-engine](../react-access-engine). Visualize access decisions, feature flags, policies, experiments, and user state in real time.
 
 ## Installation
 
 ```bash
-pnpm add -D @react-access-control/devtools
+pnpm add -D @react-access-engine/devtools
 ```
 
 ## Quick Start
 
 ```tsx
-import { AccessProvider, defineAccess } from 'react-access-control';
-import { AccessDevtools } from '@react-access-control/devtools';
+import { AccessProvider, defineAccess } from 'react-access-engine';
+import { AccessDevtools } from '@react-access-engine/devtools';
 
 const config = defineAccess({
   roles: ['admin', 'editor', 'viewer'] as const,
@@ -81,7 +81,7 @@ Every tab (except Overview) has a filter bar. Type to search by permission name,
 Use `DebugLabel` to tag sections of your component tree. This makes devtools log entries easier to trace back to specific UI areas:
 
 ```tsx
-import { DebugLabel } from '@react-access-control/devtools';
+import { DebugLabel } from '@react-access-engine/devtools';
 
 function Sidebar() {
   return (
@@ -100,7 +100,7 @@ function Sidebar() {
 ### Programmatic Control
 
 ```tsx
-import { enableDebug, disableDebug, isDebugEnabled } from '@react-access-control/devtools';
+import { enableDebug, disableDebug, isDebugEnabled } from '@react-access-engine/devtools';
 
 // Toggle debug collection at runtime
 disableDebug(); // pause collection
@@ -119,7 +119,7 @@ isDebugEnabled(); // check status
 
 ## How It Works
 
-1. The core `react-access-control` package has a `DebugEngine` that records access checks, feature evaluations, and policy evaluations when `debug: true` is set.
+1. The core `react-access-engine` package has a `DebugEngine` that records access checks, feature evaluations, and policy evaluations when `debug: true` is set.
 
 2. The devtools package subscribes to the `DebugEngine`'s event stream via `subscribe()` — a push-based listener API that delivers events in real time.
 
@@ -155,6 +155,6 @@ isDebugEnabled(); // check status
 ## Development
 
 ```bash
-pnpm --filter @react-access-control/devtools build
-pnpm --filter @react-access-control/devtools typecheck
+pnpm --filter @react-access-engine/devtools build
+pnpm --filter @react-access-engine/devtools typecheck
 ```

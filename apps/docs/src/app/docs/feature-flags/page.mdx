@@ -88,7 +88,7 @@ Features are evaluated in this order:
 ### `<Feature>` Component
 
 ```tsx
-import { Feature } from 'react-access-control';
+import { Feature } from 'react-access-engine';
 
 <Feature name="betaEditor" fallback={<ClassicEditor />}>
   <BetaEditor />
@@ -98,7 +98,7 @@ import { Feature } from 'react-access-control';
 ### `<FeatureToggle>` Render Prop
 
 ```tsx
-import { FeatureToggle } from 'react-access-control';
+import { FeatureToggle } from 'react-access-engine';
 
 <FeatureToggle name="newDashboard">
   {({ enabled, reason }) => (
@@ -113,7 +113,7 @@ import { FeatureToggle } from 'react-access-control';
 ### `useFeature` Hook
 
 ```tsx
-import { useFeature } from 'react-access-control';
+import { useFeature } from 'react-access-engine';
 
 function Dashboard() {
   const { enabled, reason } = useFeature('newDashboard');

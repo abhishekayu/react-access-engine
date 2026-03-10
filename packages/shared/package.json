@@ -1,8 +1,8 @@
 {
-  "name": "@react-access-control/shared",
+  "name": "@react-access-engine/shared",
   "version": "0.1.0",
   "private": true,
-  "description": "Shared utilities and types for react-access-control packages",
+  "description": "Shared utilities and types for react-access-engine packages",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",

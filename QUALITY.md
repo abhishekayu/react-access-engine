@@ -1,6 +1,6 @@
 # Quality & Release Readiness
 
-> Pre-release quality gates for `react-access-control` v0.1.0
+> Pre-release quality gates for `react-access-engine` v0.1.0
 
 ---
 
@@ -84,8 +84,8 @@
 
 | Package                          | ESM    | CJS    | DTS |
 | -------------------------------- | ------ | ------ | --- |
-| `react-access-control`           | ~15 KB | ~17 KB | ✅  |
-| `@react-access-control/devtools` | ~30 KB | ~32 KB | ✅  |
+| `react-access-engine`           | ~15 KB | ~17 KB | ✅  |
+| `@react-access-engine/devtools` | ~30 KB | ~32 KB | ✅  |
 
 _Sizes are uncompressed. Gzipped sizes are typically 40-60% smaller._
 
@@ -119,7 +119,7 @@ _Sizes are uncompressed. Gzipped sizes are typically 40-60% smaller._
 
 ### Dev warnings
 
-- **Missing provider**: `useAccess()` outside `<AccessProvider>` throws a clear `[react-access-control]` prefixed error.
+- **Missing provider**: `useAccess()` outside `<AccessProvider>` throws a clear `[react-access-engine]` prefixed error.
 - **Empty roles**: Warning when `AccessProvider` receives an empty roles array.
 - **Nested providers**: Warning when a nested `<AccessProvider>` is detected, suggesting `mergeConfigs()`.
 - **Unknown features**: Warning when `useFeature()` or `checkFeature()` is called with a feature name not in the config.

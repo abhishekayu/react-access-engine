@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Can, Feature, useAccess, useRole, usePlan } from 'react-access-control';
+import { Can, Feature, useAccess, useRole, usePlan } from 'react-access-engine';
 
 export default function Home() {
   const { roles, permissions } = useAccess();
@@ -10,7 +10,7 @@ export default function Home() {
 
   return (
     <main style={{ maxWidth: 700, margin: '0 auto' }}>
-      <h1>Next.js + react-access-control</h1>
+      <h1>Next.js + react-access-engine</h1>
 
       <section>
         <h2>Current User</h2>

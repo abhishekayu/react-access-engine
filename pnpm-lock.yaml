@@ -80,9 +80,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -132,9 +132,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -160,9 +160,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -188,9 +188,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -216,9 +216,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -244,9 +244,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -275,9 +275,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -297,9 +297,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../../packages/react-access-control
+        version: link:../../packages/react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -331,9 +331,9 @@ importers:
       react:
         specifier: ^19.0.0
         version: 19.2.4
-      react-access-control:
+      react-access-engine:
         specifier: workspace:*
-        version: link:../react-access-control
+        version: link:../react-access-engine
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
@@ -344,7 +344,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  packages/react-access-control:
+  packages/react-access-engine:
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.0.0

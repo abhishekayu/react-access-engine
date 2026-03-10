@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://react-access-control.dev/sitemap.xml',
+    sitemap: 'https://react-access-engine.dev/sitemap.xml',
   };
 }

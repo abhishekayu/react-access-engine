@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineAccess, AccessProvider, Experiment, useExperiment } from 'react-access-control';
+import { defineAccess, AccessProvider, Experiment, useExperiment } from 'react-access-engine';
 
 // ---------------------------------------------------------------------------
 // Config — two experiments with variant allocation

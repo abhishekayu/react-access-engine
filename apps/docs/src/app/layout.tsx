@@ -6,26 +6,26 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'react-access-control — Unified Access Control for React',
-    template: '%s | react-access-control',
+    default: 'react-access-engine — Unified Access Control for React',
+    template: '%s | react-access-engine',
   },
   description:
     'RBAC, ABAC, feature flags, A/B experiments, plan gating, and remote config — all in a single, type-safe, tree-shakeable React package.',
-  metadataBase: new URL('https://react-access-control.dev'),
+  metadataBase: new URL('https://react-access-engine.dev'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    siteName: 'react-access-control',
-    title: 'react-access-control — Unified Access Control for React',
+    siteName: 'react-access-engine',
+    title: 'react-access-engine — Unified Access Control for React',
     description:
       'RBAC, ABAC, feature flags, A/B experiments, plan gating, and remote config — all in one package.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'react-access-control',
+    title: 'react-access-engine',
     description: 'Unified access control for React apps.',
   },
   robots: { index: true, follow: true },
@@ -34,12 +34,12 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareSourceCode',
-  name: 'react-access-control',
+  name: 'react-access-engine',
   description:
     'Unified RBAC, ABAC, feature flags, A/B experiments, plan gating, and remote config for React.',
   programmingLanguage: 'TypeScript',
   runtimePlatform: 'React',
-  codeRepository: 'https://github.com/example/react-access-control',
+  codeRepository: 'https://github.com/example/react-access-engine',
   license: 'https://opensource.org/licenses/MIT',
   operatingSystem: 'Cross-platform',
   applicationCategory: 'DeveloperApplication',

@@ -16,7 +16,7 @@ import {
   useExperiment,
   useAccessDebug,
   createAuditLoggerPlugin,
-} from 'react-access-control';
+} from 'react-access-engine';
 
 // ---------------------------------------------------------------------------
 // Styles
@@ -567,7 +567,7 @@ export function App() {
   return (
     <div style={styles.app}>
       <div style={styles.header}>
-        <h1 style={{ margin: 0 }}>react-access-control Playground</h1>
+        <h1 style={{ margin: 0 }}>react-access-engine Playground</h1>
         <p style={{ margin: '8px 0 0', color: '#666' }}>
           Interactive explorer for roles, permissions, features, experiments, policies, and debug
           traces.

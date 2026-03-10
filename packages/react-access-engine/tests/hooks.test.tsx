@@ -110,7 +110,7 @@ describe('useAccess', () => {
 
   it('throws outside AccessProvider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => renderHook(() => useAccess())).toThrow('[react-access-control]');
+    expect(() => renderHook(() => useAccess())).toThrow('[react-access-engine]');
     spy.mockRestore();
   });
 });

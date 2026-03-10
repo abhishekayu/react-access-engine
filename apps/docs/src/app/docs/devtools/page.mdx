@@ -6,12 +6,12 @@ export const metadata = {
 
 # DevTools
 
-The `@react-access-control/devtools` package provides a real-time debugging overlay for inspecting access checks, feature evaluations, policy traces, and configuration.
+The `@react-access-engine/devtools` package provides a real-time debugging overlay for inspecting access checks, feature evaluations, policy traces, and configuration.
 
 ## Installation
 
 ```bash
-npm install @react-access-control/devtools
+npm install @react-access-engine/devtools
 ```
 
 ## Setup
@@ -19,8 +19,8 @@ npm install @react-access-control/devtools
 Add the DevTools component inside your `<AccessProvider>`:
 
 ```tsx
-import { AccessProvider } from 'react-access-control';
-import { AccessDevTools } from '@react-access-control/devtools';
+import { AccessProvider } from 'react-access-engine';
+import { AccessDevTools } from '@react-access-engine/devtools';
 
 function App() {
   return (
@@ -106,7 +106,7 @@ Experiment assignment overview:
 For programmatic access to debug information:
 
 ```tsx
-import { useAccessDebug } from 'react-access-control';
+import { useAccessDebug } from 'react-access-engine';
 
 function MyDebugPanel() {
   const { lastChecks, lastFeatureEvals, lastPolicyEvals, configSnapshot, timestamp } =
@@ -119,7 +119,7 @@ function MyDebugPanel() {
 ### Debug Engine API
 
 ```tsx
-import { DebugEngine } from 'react-access-control';
+import { DebugEngine } from 'react-access-engine';
 
 const engine = new DebugEngine();
 engine.setConfig(config);

@@ -76,7 +76,7 @@ export class RemoteConfigEngine {
         data = await this._fetchFromUrl(this._loader.url);
       } else {
         throw new Error(
-          '[react-access-control] RemoteConfigLoader requires either `url` or `load`.',
+          '[react-access-engine] RemoteConfigLoader requires either `url` or `load`.',
         );
       }
 
@@ -147,14 +147,14 @@ export class RemoteConfigEngine {
     const fetchFn = typeof globalThis.fetch === 'function' ? globalThis.fetch : null;
     if (!fetchFn) {
       throw new Error(
-        '[react-access-control] fetch is not available. Provide a custom `load` function.',
+        '[react-access-engine] fetch is not available. Provide a custom `load` function.',
       );
     }
 
     const response = await fetchFn(url, this._loader.fetchOptions);
     if (!response.ok) {
       throw new Error(
-        `[react-access-control] Remote config fetch failed: ${response.status} ${response.statusText}`,
+        `[react-access-engine] Remote config fetch failed: ${response.status} ${response.statusText}`,
       );
     }
 
@@ -166,12 +166,12 @@ export class RemoteConfigEngine {
       const signature = response.headers.get(sigHeader);
       if (!signature) {
         throw new Error(
-          `[react-access-control] Missing signature header "${sigHeader}" on remote config response.`,
+          `[react-access-engine] Missing signature header "${sigHeader}" on remote config response.`,
         );
       }
       const valid = await this._loader.verifySignature(text, signature);
       if (!valid) {
-        throw new Error('[react-access-control] Remote config signature verification failed.');
+        throw new Error('[react-access-engine] Remote config signature verification failed.');
       }
     }
 

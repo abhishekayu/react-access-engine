@@ -1,13 +1,13 @@
 export const metadata = {
   title: 'Core Concepts',
-  description: 'Understand the architecture and core concepts of react-access-control.',
+  description: 'Understand the architecture and core concepts of react-access-engine.',
 };
 
 # Core Concepts
 
 ## Architecture Overview
 
-react-access-control is built around a single `<AccessProvider>` that initializes several specialized engines:
+react-access-engine is built around a single `<AccessProvider>` that initializes several specialized engines:
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -92,7 +92,7 @@ If a feature has dependencies, they're resolved via topological sort. Circular d
 
 ## Hooks vs Components
 
-react-access-control provides both declarative components and imperative hooks:
+react-access-engine provides both declarative components and imperative hooks:
 
 | Use Case                   | Component                 | Hook              |
 | -------------------------- | ------------------------- | ----------------- |
@@ -110,7 +110,7 @@ react-access-control provides both declarative components and imperative hooks:
 Use `mergeConfigs()` to combine base configs with overrides:
 
 ```ts
-import { defineAccess, mergeConfigs } from 'react-access-control';
+import { defineAccess, mergeConfigs } from 'react-access-engine';
 
 const baseConfig = defineAccess({
   roles: ['admin', 'user'] as const,

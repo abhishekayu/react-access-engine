@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://react-access-control.dev';
+const BASE_URL = 'https://react-access-engine.dev';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [

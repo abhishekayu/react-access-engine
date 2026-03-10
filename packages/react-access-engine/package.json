@@ -1,5 +1,5 @@
 {
-  "name": "react-access-control",
+  "name": "react-access-engine",
   "version": "0.1.0",
   "description": "Unified React-first access control, feature flags, and policy engine",
   "author": "Abhishek",
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/abhishekayu/react-access-engine.git",
-    "directory": "packages/react-access-control"
+    "directory": "packages/react-access-engine"
   },
   "bugs": {
     "url": "https://github.com/abhishekayu/react-access-engine/issues"

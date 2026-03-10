@@ -7,7 +7,7 @@ import {
   usePolicy,
   useRole,
   createAuditLoggerPlugin,
-} from 'react-access-control';
+} from 'react-access-engine';
 
 // ---------------------------------------------------------------------------
 // Config — ABAC policies with condition-based access control
@@ -190,12 +190,12 @@ function PolicyDashboard() {
         <h3 style={{ margin: '0 0 8px' }}>Current User</h3>
         <p style={{ margin: 0 }}>
           ID: <strong>{user.id}</strong> | Roles: <strong>{roles.join(', ')}</strong>
-          {user.attributes?.department && (
+          {user.attributes?.department ? (
             <>
               {' '}
-              | Department: <strong>{user.attributes.department as string}</strong>
+              | Department: <strong>{String(user.attributes.department)}</strong>
             </>
-          )}
+          ) : null}
         </p>
       </div>
 

@@ -23,7 +23,7 @@ export function Nav() {
           className="flex items-center gap-2.5 font-bold text-zinc-900 dark:text-white"
         >
           <Shield className="h-6 w-6 text-blue-600" />
-          <span className="hidden sm:inline">react-access-control</span>
+          <span className="hidden sm:inline">react-access-engine</span>
           <span className="sm:hidden">RAC</span>
         </Link>
 
@@ -49,7 +49,7 @@ export function Nav() {
         <div className="flex items-center gap-2">
           <SearchTrigger />
           <a
-            href="https://github.com/example/react-access-control"
+            href="https://github.com/example/react-access-engine"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-9 w-9 items-center justify-center rounded-md text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"

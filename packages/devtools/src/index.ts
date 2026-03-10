@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// @react-access-control/devtools — Public API
+// @react-access-engine/devtools — Public API
 // ---------------------------------------------------------------------------
 // Development-only overlay for visualizing access control decisions,
 // feature flags, policies, experiments, and user state.

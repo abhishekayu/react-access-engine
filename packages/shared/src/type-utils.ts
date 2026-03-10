@@ -1,5 +1,5 @@
 /**
- * Shared type utilities used across react-access-control packages.
+ * Shared type utilities used across react-access-engine packages.
  */
 
 /** Make specific keys of T required */

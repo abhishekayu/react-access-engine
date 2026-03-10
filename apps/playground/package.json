@@ -1,8 +1,8 @@
 {
-  "name": "@react-access-control/playground",
+  "name": "@react-access-engine/playground",
   "version": "0.0.0",
   "private": true,
-  "description": "Interactive playground for react-access-control",
+  "description": "Interactive playground for react-access-engine",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,7 +15,7 @@
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-access-control": "workspace:*"
+    "react-access-engine": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

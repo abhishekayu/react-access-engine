@@ -61,7 +61,7 @@ export function Comparison() {
         <FadeIn>
           <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-white">
-              Why react-access-control?
+              Why react-access-engine?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
               Compare with combining separate RBAC libraries, feature flag services, and DIY

@@ -1,14 +1,14 @@
 export const metadata = {
   title: 'Introduction',
-  description: 'Learn about react-access-control — unified access control for React applications.',
+  description: 'Learn about react-access-engine — unified access control for React applications.',
 };
 
 # Introduction
 
-**react-access-control** is a unified, type-safe access control library for React that combines RBAC, ABAC,
+**react-access-engine** is a unified, type-safe access control library for React that combines RBAC, ABAC,
 feature flags, A/B experiments, plan gating, remote config, and a plugin system into a single tree-shakeable package.
 
-## Why react-access-control?
+## Why react-access-engine?
 
 Modern applications need multiple layers of access control:
 
@@ -19,7 +19,7 @@ Modern applications need multiple layers of access control:
 - **What plan are they on?** → Subscription gating
 - **Should we refresh rules?** → Remote config
 
-Most teams combine 3–4 separate libraries or services for this. **react-access-control** replaces them all
+Most teams combine 3–4 separate libraries or services for this. **react-access-engine** replaces them all
 with a single `<AccessProvider>`, a single config object, and a unified set of hooks and components.
 
 ## Key Features
@@ -39,7 +39,7 @@ with a single `<AccessProvider>`, a single config object, and a unified set of h
 ## Quick Example
 
 ```tsx
-import { defineAccess, AccessProvider, Can, Feature } from 'react-access-control';
+import { defineAccess, AccessProvider, Can, Feature } from 'react-access-engine';
 
 const config = defineAccess({
   roles: ['admin', 'editor', 'viewer'] as const,

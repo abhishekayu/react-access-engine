@@ -75,7 +75,7 @@ const config = defineAccess({
 For declarative conditions (without writing functions), use the condition engine:
 
 ```tsx
-import { evaluateCondition, evaluateConditions, buildConditionContext } from 'react-access-control';
+import { evaluateCondition, evaluateConditions, buildConditionContext } from 'react-access-engine';
 
 // Simple condition
 const isOwner = evaluateCondition(
@@ -118,7 +118,7 @@ const canAccess = evaluateConditions(
 Register custom operators via the plugin system:
 
 ```tsx
-import { createOperatorPlugin } from 'react-access-control';
+import { createOperatorPlugin } from 'react-access-engine';
 
 const geoPlugin = createOperatorPlugin([
   {

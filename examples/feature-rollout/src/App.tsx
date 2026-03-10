@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { defineAccess, AccessProvider, Feature, useFeature } from 'react-access-control';
+import { defineAccess, AccessProvider, Feature, useFeature } from 'react-access-engine';
 
 // ---------------------------------------------------------------------------
 // Config — Features with percentage rollouts, role restrictions, and plan gates

@@ -15,7 +15,7 @@
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-access-control": "workspace:*"
+    "react-access-engine": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

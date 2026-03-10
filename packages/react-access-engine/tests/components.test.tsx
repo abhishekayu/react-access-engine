@@ -552,7 +552,7 @@ describe('Hooks outside provider', () => {
           <span>content</span>
         </Can>,
       ),
-    ).toThrow('[react-access-control]');
+    ).toThrow('[react-access-engine]');
     spy.mockRestore();
   });
 
@@ -564,7 +564,7 @@ describe('Hooks outside provider', () => {
           <span>content</span>
         </PermissionGuard>,
       ),
-    ).toThrow('[react-access-control]');
+    ).toThrow('[react-access-engine]');
     spy.mockRestore();
   });
 });

@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
-  transpilePackages: ['react-access-control'],
+  transpilePackages: ['react-access-engine'],
 };
 
 const withMDX = createMDX({

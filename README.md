@@ -1,18 +1,18 @@
 <div align="center">
 
-# react-access-control
+# react-access-engine
 
 **Unified access control, feature flags, and policy engine for React.**
 
-[![npm version](https://img.shields.io/npm/v/react-access-control?color=blue&label=npm)](https://www.npmjs.com/package/react-access-control)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-access-control?label=minzipped)](https://bundlephobia.com/package/react-access-control)
+[![npm version](https://img.shields.io/npm/v/react-access-engine?color=blue&label=npm)](https://www.npmjs.com/package/react-access-engine)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-access-engine?label=minzipped)](https://bundlephobia.com/package/react-access-engine)
 [![CI](https://github.com/abhishekayu/react-access-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/abhishekayu/react-access-engine/actions/workflows/ci.yml)
 [![codecov](https://img.shields.io/badge/tests-220%20passing-brightgreen)](https://github.com/abhishekayu/react-access-engine)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![license](https://img.shields.io/npm/l/react-access-control)](LICENSE)
+[![license](https://img.shields.io/npm/l/react-access-engine)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Documentation](https://react-access-control.dev) · [Playground](https://react-access-control.dev/playground) · [Examples](https://github.com/abhishekayu/react-access-engine/tree/main/examples)
+[Documentation](https://react-access-engine.dev) · [Playground](https://react-access-engine.dev/playground) · [Examples](https://github.com/abhishekayu/react-access-engine/tree/main/examples)
 
 </div>
 
@@ -22,7 +22,7 @@
 
 React apps cobble together homegrown RBAC, a feature flag service, ad-hoc plan gating, and manual A/B test wiring — each with its own provider, API, and blind spots.
 
-**react-access-control** replaces all of them with one system — and keeps it simple:
+**react-access-engine** replaces all of them with one system — and keeps it simple:
 
 ```tsx
 const { can, is, has, tier } = useAccess();
@@ -53,11 +53,11 @@ tier('pro'); // check plan
 ## Installation
 
 ```bash
-npm install react-access-control
+npm install react-access-engine
 # or
-pnpm add react-access-control
+pnpm add react-access-engine
 # or
-yarn add react-access-control
+yarn add react-access-engine
 ```
 
 > Requires `react >= 18` as a peer dependency.
@@ -67,7 +67,7 @@ yarn add react-access-control
 ### 1. Define your config
 
 ```typescript
-import { defineAccess } from 'react-access-control';
+import { defineAccess } from 'react-access-engine';
 
 const config = defineAccess({
   roles: ['admin', 'editor', 'viewer'],
@@ -87,7 +87,7 @@ const config = defineAccess({
 ### 2. Wrap your app
 
 ```tsx
-import { AccessProvider } from 'react-access-control';
+import { AccessProvider } from 'react-access-engine';
 
 function App() {
   return (
@@ -103,7 +103,7 @@ function App() {
 **One hook — `useAccess()` — does everything:**
 
 ```tsx
-import { useAccess } from 'react-access-control';
+import { useAccess } from 'react-access-engine';
 
 function Dashboard() {
   const { can, is, has, tier } = useAccess();
@@ -122,7 +122,7 @@ function Dashboard() {
 **Or use `<Allow>` — one component for all access control:**
 
 ```tsx
-import { Allow } from 'react-access-control';
+import { Allow } from 'react-access-engine';
 
 function Dashboard() {
   return (
@@ -468,7 +468,7 @@ function ExportButton() {
 
 ## SSR / Next.js
 
-react-access-control is SSR-safe by design:
+react-access-engine is SSR-safe by design:
 
 - All hooks return deterministic values (no `useEffect` for initial state)
 - No `window`/`document`/`localStorage` access in core evaluation
@@ -477,7 +477,7 @@ react-access-control is SSR-safe by design:
 
 ```tsx
 // app/layout.tsx (Next.js App Router)
-import { AccessProvider } from 'react-access-control';
+import { AccessProvider } from 'react-access-engine';
 
 export default function RootLayout({ children }) {
   const user = await getServerUser(); // Your server-side user fetching
@@ -538,7 +538,7 @@ Each engine is a pure function module. Unused engines are tree-shaken from bundl
 ```
 react-access-engine/
 ├── packages/
-│   ├── react-access-control/  # Core library (published to npm)
+│   ├── react-access-engine/  # Core library (published to npm)
 │   ├── devtools/              # Dev overlay for inspecting access decisions
 │   └── shared/                # Internal shared utilities
 ├── apps/
@@ -592,7 +592,7 @@ All contributions — from bug reports to documentation to code — are welcome.
 
 ## Comparison
 
-| Feature              | react-access-control | RBAC Library | Feature Flag Service | DIY |
+| Feature              | react-access-engine | RBAC Library | Feature Flag Service | DIY |
 | -------------------- | :------------------: | :----------: | :------------------: | :-: |
 | RBAC with wildcards  |          ✅          |      ✅      |          ❌          | ⚠️  |
 | ABAC / Policy engine |          ✅          |      ❌      |          ❌          | ⚠️  |
@@ -609,14 +609,14 @@ All contributions — from bug reports to documentation to code — are welcome.
 
 ## Community
 
-- [Documentation](https://react-access-control.dev)
+- [Documentation](https://react-access-engine.dev)
 - [GitHub Discussions](https://github.com/abhishekayu/react-access-engine/discussions) — Questions & ideas
 - [Issue Tracker](https://github.com/abhishekayu/react-access-engine/issues) — Bug reports & feature requests
-- [Changelog](https://github.com/abhishekayu/react-access-engine/blob/main/packages/react-access-control/CHANGELOG.md)
+- [Changelog](https://github.com/abhishekayu/react-access-engine/blob/main/packages/react-access-engine/CHANGELOG.md)
 
 ## Sponsors
 
-If react-access-control saves you time, consider [sponsoring the project](https://github.com/sponsors/abhishekayu).
+If react-access-engine saves you time, consider [sponsoring the project](https://github.com/sponsors/abhishekayu).
 
 ## License
 

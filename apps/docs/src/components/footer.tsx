@@ -12,7 +12,7 @@ export function Footer() {
               className="flex items-center gap-2 font-bold text-zinc-900 dark:text-white"
             >
               <Shield className="h-5 w-5 text-blue-600" />
-              <span>react-access-control</span>
+              <span>react-access-engine</span>
             </Link>
             <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
               Unified access control for React. RBAC, ABAC, feature flags, experiments — all in one.
@@ -62,7 +62,7 @@ export function Footer() {
             <ul className="mt-3 space-y-2">
               <li>
                 <a
-                  href="https://github.com/example/react-access-control"
+                  href="https://github.com/example/react-access-engine"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
@@ -72,7 +72,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://github.com/example/react-access-control/discussions"
+                  href="https://github.com/example/react-access-engine/discussions"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
@@ -104,7 +104,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="https://www.npmjs.com/package/react-access-control"
+                  href="https://www.npmjs.com/package/react-access-engine"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"

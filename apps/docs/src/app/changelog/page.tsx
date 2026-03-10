@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
   title: 'Changelog',
-  description: 'Release history and changelog for react-access-control.',
+  description: 'Release history and changelog for react-access-engine.',
 };
 
 export default function ChangelogPage() {
@@ -11,7 +11,7 @@ export default function ChangelogPage() {
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Changelog</h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-        All notable changes to react-access-control are documented here.
+        All notable changes to react-access-engine are documented here.
       </p>
 
       <div className="mt-12 space-y-12">
@@ -52,7 +52,7 @@ export default function ChangelogPage() {
                 <li>
                   DevTools overlay package (
                   <code className="text-xs bg-zinc-100 px-1 rounded dark:bg-zinc-800">
-                    @react-access-control/devtools
+                    @react-access-engine/devtools
                   </code>
                   )
                 </li>

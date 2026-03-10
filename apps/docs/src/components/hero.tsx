@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { FadeIn } from './fade-in';
 
-const heroCode = `import { AccessProvider, Can, Feature } from 'react-access-control';
+const heroCode = `import { AccessProvider, Can, Feature } from 'react-access-engine';
 
 const config = defineAccess({
   roles: ['admin', 'editor', 'viewer'] as const,
@@ -79,7 +79,7 @@ export function Hero() {
                 </Button>
                 <Button variant="secondary" asChild>
                   <a
-                    href="https://github.com/example/react-access-control"
+                    href="https://github.com/example/react-access-engine"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -89,7 +89,7 @@ export function Hero() {
                 </Button>
                 <Button variant="secondary" asChild>
                   <a
-                    href="https://www.npmjs.com/package/react-access-control"
+                    href="https://www.npmjs.com/package/react-access-engine"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -104,7 +104,7 @@ export function Hero() {
               {/* Install command */}
               <div className="mt-8 inline-flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-950 px-4 py-2.5 dark:border-zinc-700">
                 <code className="text-sm text-zinc-300">
-                  <span className="text-green-400">$</span> npm install react-access-control
+                  <span className="text-green-400">$</span> npm install react-access-engine
                 </code>
               </div>
             </FadeIn>

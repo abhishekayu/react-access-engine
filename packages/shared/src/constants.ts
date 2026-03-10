@@ -1,8 +1,8 @@
 /**
- * Shared constants used across react-access-control packages.
+ * Shared constants used across react-access-engine packages.
  */
 
-export const PACKAGE_NAME = 'react-access-control';
+export const PACKAGE_NAME = 'react-access-engine';
 
 export const DEFAULT_ENVIRONMENT = 'default';
 

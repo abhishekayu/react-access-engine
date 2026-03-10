@@ -64,7 +64,7 @@ When an experiment is **inactive**, all users receive the `defaultVariant` with 
 ### `<Experiment>` Component
 
 ```tsx
-import { Experiment } from 'react-access-control';
+import { Experiment } from 'react-access-engine';
 
 <Experiment
   id="checkout-flow"
@@ -82,7 +82,7 @@ The component renders the variant assigned to the current user. If the experimen
 ### `useExperiment` Hook
 
 ```tsx
-import { useExperiment } from 'react-access-control';
+import { useExperiment } from 'react-access-engine';
 
 function CheckoutPage() {
   const { experimentId, variant, active } = useExperiment('checkout-flow');
@@ -110,7 +110,7 @@ function CheckoutPage() {
 Use the analytics plugin to automatically track experiment assignments:
 
 ```tsx
-import { createAnalyticsPlugin } from 'react-access-control';
+import { createAnalyticsPlugin } from 'react-access-engine';
 
 const analyticsPlugin = createAnalyticsPlugin({
   adapter: {

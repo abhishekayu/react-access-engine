@@ -1,7 +1,7 @@
 export const metadata = {
   title: 'Plugins',
   description:
-    'Extend react-access-control with plugins for audit logging, analytics, and custom operators.',
+    'Extend react-access-engine with plugins for audit logging, analytics, and custom operators.',
 };
 
 # Plugins
@@ -32,7 +32,7 @@ All hooks are **optional**. Plugin errors are **silently caught** — they never
 Logs all access events for audit trails:
 
 ```tsx
-import { createAuditLoggerPlugin } from 'react-access-control';
+import { createAuditLoggerPlugin } from 'react-access-engine';
 
 const auditPlugin = createAuditLoggerPlugin({
   log: (event) => {
@@ -48,7 +48,7 @@ const auditPlugin = createAuditLoggerPlugin({
 Track access events in your analytics provider:
 
 ```tsx
-import { createAnalyticsPlugin } from 'react-access-control';
+import { createAnalyticsPlugin } from 'react-access-engine';
 
 const analyticsPlugin = createAnalyticsPlugin({
   adapter: {
@@ -68,7 +68,7 @@ const analyticsPlugin = createAnalyticsPlugin({
 Register custom condition operators for the ABAC engine:
 
 ```tsx
-import { createOperatorPlugin } from 'react-access-control';
+import { createOperatorPlugin } from 'react-access-engine';
 
 const geoPlugin = createOperatorPlugin([
   {
@@ -158,7 +158,7 @@ const config = defineAccess({
 For direct engine usage:
 
 ```tsx
-import { PluginEngine } from 'react-access-control';
+import { PluginEngine } from 'react-access-engine';
 
 const engine = new PluginEngine();
 engine.register(myPlugin);

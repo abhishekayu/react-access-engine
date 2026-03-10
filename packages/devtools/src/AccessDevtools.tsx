@@ -16,12 +16,12 @@ declare const process: { env: Record<string, string | undefined> } | undefined;
 // ---------------------------------------------------------------------------
 // AccessDevtools
 // ---------------------------------------------------------------------------
-// Development-only floating overlay that visualizes the react-access-control
+// Development-only floating overlay that visualizes the react-access-engine
 // system in real time. Shows user state, roles, permissions, feature flags,
 // policy evaluations, experiments, and a live event log.
 //
 // Usage:
-//   import { AccessDevtools } from '@react-access-control/devtools';
+//   import { AccessDevtools } from '@react-access-engine/devtools';
 //   <AccessProvider config={config} user={user}>
 //     <App />
 //     <AccessDevtools />

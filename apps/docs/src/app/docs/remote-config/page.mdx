@@ -13,7 +13,7 @@ Load access configuration from a remote API, with automatic polling, caching, an
 ### Using the `useRemoteConfig` Hook
 
 ```tsx
-import { defineAccess, AccessProvider, useRemoteConfig } from 'react-access-control';
+import { defineAccess, AccessProvider, useRemoteConfig } from 'react-access-engine';
 
 const baseConfig = defineAccess({
   roles: ['admin', 'user'] as const,
@@ -142,7 +142,7 @@ If verification fails, the config update is rejected and the previous config is 
 For direct engine usage outside of React:
 
 ```tsx
-import { RemoteConfigEngine } from 'react-access-control';
+import { RemoteConfigEngine } from 'react-access-engine';
 
 const engine = new RemoteConfigEngine(loader);
 

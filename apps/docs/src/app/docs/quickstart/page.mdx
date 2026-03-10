@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Quick Start',
-  description: 'Get up and running with react-access-control in under 5 minutes.',
+  description: 'Get up and running with react-access-engine in under 5 minutes.',
 };
 
 # Quick Start
@@ -13,7 +13,7 @@ Create a configuration that describes your roles, permissions, and features:
 
 ```tsx
 // access.config.ts
-import { defineAccess } from 'react-access-control';
+import { defineAccess } from 'react-access-engine';
 
 export const accessConfig = defineAccess({
   roles: ['admin', 'editor', 'viewer'] as const,
@@ -40,7 +40,7 @@ Provide the config and the current user to `<AccessProvider>`:
 
 ```tsx
 // App.tsx
-import { AccessProvider } from 'react-access-control';
+import { AccessProvider } from 'react-access-engine';
 import { accessConfig } from './access.config';
 
 const currentUser = {
@@ -67,7 +67,7 @@ function App() {
 Use declarative components to show/hide UI based on access:
 
 ```tsx
-import { Can, Feature, AccessGate } from 'react-access-control';
+import { Can, Feature, AccessGate } from 'react-access-engine';
 
 function Dashboard() {
   return (
@@ -96,7 +96,7 @@ function Dashboard() {
 For programmatic checks, use the hooks:
 
 ```tsx
-import { usePermission, useFeature, useRole, usePlan } from 'react-access-control';
+import { usePermission, useFeature, useRole, usePlan } from 'react-access-engine';
 
 function PostActions() {
   const canWrite = usePermission('posts:write');
@@ -119,7 +119,7 @@ function PostActions() {
 Drop in the devtools overlay for debugging during development:
 
 ```tsx
-import { AccessDevTools } from '@react-access-control/devtools';
+import { AccessDevTools } from '@react-access-engine/devtools';
 
 function App() {
   return (

@@ -7,7 +7,7 @@ import {
   useAccess,
   usePlan,
   useRole,
-} from 'react-access-control';
+} from 'react-access-engine';
 
 // ---------------------------------------------------------------------------
 // Config — SaaS with plan tiers, roles per org, and feature flags

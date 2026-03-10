@@ -1,6 +1,6 @@
 'use client';
 
-import { defineAccess } from 'react-access-control';
+import { defineAccess } from 'react-access-engine';
 
 export const accessConfig = defineAccess({
   roles: ['admin', 'member', 'guest'] as const,

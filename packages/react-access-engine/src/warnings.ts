@@ -16,7 +16,7 @@ const _warned = /* @__PURE__ */ new Set<string>();
  */
 export function warn(message: string): void {
   if (__DEV__) {
-    console.warn(`[react-access-control] ${message}`);
+    console.warn(`[react-access-engine] ${message}`);
   }
 }
 
@@ -27,7 +27,7 @@ export function warn(message: string): void {
 export function warnOnce(message: string): void {
   if (__DEV__ && !_warned.has(message)) {
     _warned.add(message);
-    console.warn(`[react-access-control] ${message}`);
+    console.warn(`[react-access-engine] ${message}`);
   }
 }
 
@@ -37,6 +37,6 @@ export function warnOnce(message: string): void {
  */
 export function invariant(condition: unknown, message: string): asserts condition {
   if (!condition) {
-    throw new Error(`[react-access-control] ${message}`);
+    throw new Error(`[react-access-engine] ${message}`);
   }
 }

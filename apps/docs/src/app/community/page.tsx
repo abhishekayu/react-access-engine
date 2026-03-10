@@ -4,7 +4,7 @@ import { Github, MessageSquare, Heart, BookOpen, Bug } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Community',
-  description: 'Join the react-access-control community — contribute, discuss, and get support.',
+  description: 'Join the react-access-engine community — contribute, discuss, and get support.',
 };
 
 const links = [
@@ -12,21 +12,21 @@ const links = [
     icon: Github,
     title: 'GitHub Repository',
     description: 'Browse the source code, report issues, and submit PRs.',
-    href: 'https://github.com/example/react-access-control',
+    href: 'https://github.com/example/react-access-engine',
     label: 'View on GitHub',
   },
   {
     icon: MessageSquare,
     title: 'Discussions',
     description: 'Ask questions, share ideas, and connect with other users.',
-    href: 'https://github.com/example/react-access-control/discussions',
+    href: 'https://github.com/example/react-access-engine/discussions',
     label: 'Join Discussions',
   },
   {
     icon: Bug,
     title: 'Report a Bug',
     description: 'Found a bug? Open an issue with reproduction steps.',
-    href: 'https://github.com/example/react-access-control/issues/new',
+    href: 'https://github.com/example/react-access-engine/issues/new',
     label: 'Report Bug',
   },
   {
@@ -44,7 +44,7 @@ export default function CommunityPage() {
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">Community</h1>
       <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-        react-access-control is open source and community-driven. Here&apos;s how to get involved.
+        react-access-engine is open source and community-driven. Here&apos;s how to get involved.
       </p>
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2">
@@ -110,7 +110,7 @@ export default function CommunityPage() {
           Sponsor this project
         </h3>
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          If react-access-control saves you time, consider sponsoring the project to support
+          If react-access-engine saves you time, consider sponsoring the project to support
           continued development.
         </p>
         <a

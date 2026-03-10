@@ -1,16 +1,16 @@
 export const metadata = {
   title: 'Examples',
-  description: 'Real-world usage examples for react-access-control.',
+  description: 'Real-world usage examples for react-access-engine.',
 };
 
 # Examples
 
-Real-world patterns and recipes for using react-access-control in production applications.
+Real-world patterns and recipes for using react-access-engine in production applications.
 
 ## SaaS Dashboard with Plan Gating
 
 ```tsx
-import { defineAccess, AccessProvider, Can, Feature, AccessGate } from 'react-access-control';
+import { defineAccess, AccessProvider, Can, Feature, AccessGate } from 'react-access-engine';
 
 const config = defineAccess({
   roles: ['admin', 'member', 'viewer'] as const,
@@ -89,7 +89,7 @@ function ProjectList({ projects }) {
 ## A/B Testing with Analytics
 
 ```tsx
-import { createAnalyticsPlugin, defineAccess } from 'react-access-control';
+import { createAnalyticsPlugin, defineAccess } from 'react-access-engine';
 
 const analytics = createAnalyticsPlugin({
   adapter: {
@@ -139,7 +139,7 @@ function CheckoutPage() {
 
 ```tsx
 // app/layout.tsx
-import { AccessProvider } from 'react-access-control';
+import { AccessProvider } from 'react-access-engine';
 import { getUser } from '@/lib/auth';
 import { accessConfig } from '@/lib/access-config';
 
@@ -159,7 +159,7 @@ export default async function RootLayout({ children }) {
 
 // app/admin/page.tsx
 ('use client');
-import { PermissionGuard } from 'react-access-control';
+import { PermissionGuard } from 'react-access-engine';
 
 export default function AdminPage() {
   return (
@@ -173,7 +173,7 @@ export default function AdminPage() {
 ## Feature Flags with Remote Config
 
 ```tsx
-import { defineAccess, useRemoteConfig, AccessProvider, Feature } from 'react-access-control';
+import { defineAccess, useRemoteConfig, AccessProvider, Feature } from 'react-access-engine';
 
 const baseConfig = defineAccess({
   roles: ['user'] as const,

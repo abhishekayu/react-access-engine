@@ -7,6 +7,6 @@ export default defineConfig({
   splitting: true,
   treeshake: true,
   clean: true,
-  external: ['react', 'react-dom', 'react-access-control'],
+  external: ['react', 'react-dom', 'react-access-engine'],
   sourcemap: true,
 });

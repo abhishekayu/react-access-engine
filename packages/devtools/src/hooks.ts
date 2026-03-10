@@ -1,14 +1,14 @@
 'use client';
 
 import { useContext, useSyncExternalStore, useCallback, useRef } from 'react';
-import { AccessContext } from 'react-access-control';
-import type { AccessContextValue } from 'react-access-control';
+import { AccessContext } from 'react-access-engine';
+import type { AccessContextValue } from 'react-access-engine';
 import type {
   DebugEvent,
   AccessCheckEvent,
   FeatureEvaluateEvent,
   PolicyEvaluateEvent,
-} from 'react-access-control';
+} from 'react-access-engine';
 import type { DevtoolsLogEntry, DevtoolsSnapshot } from './types';
 
 // ---------------------------------------------------------------------------

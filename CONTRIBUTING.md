@@ -1,4 +1,4 @@
-# Contributing to react-access-control
+# Contributing to react-access-engine
 
 Thank you for considering a contribution! Every improvement — fixing a typo, adding a test, filing an issue, or writing a feature — makes this project better.
 
@@ -56,7 +56,7 @@ pnpm test
 | `pnpm typecheck`                                | Type-check all packages          |
 | `pnpm format`                                   | Format all files with Prettier   |
 | `pnpm format:check`                             | Check formatting without writing |
-| `pnpm --filter react-access-control test:watch` | Watch tests for the core package |
+| `pnpm --filter react-access-engine test:watch` | Watch tests for the core package |
 | `pnpm --filter playground dev`                  | Start the Vite playground        |
 | `pnpm --filter docs dev`                        | Start the docs dev server        |
 
@@ -64,10 +64,10 @@ pnpm test
 
 ```bash
 # Watch mode for the core package
-pnpm --filter react-access-control dev
+pnpm --filter react-access-engine dev
 
 # In another terminal, run tests in watch mode
-pnpm --filter react-access-control test:watch
+pnpm --filter react-access-engine test:watch
 ```
 
 ### Adding a Changeset
@@ -187,7 +187,7 @@ Use the [feature request template](https://github.com/abhishekayu/react-access-e
 
 ```
 packages/
-├── react-access-control/  # Core library (npm: react-access-control)
+├── react-access-engine/  # Core library (npm: react-access-engine)
 │   ├── src/
 │   │   ├── components/    # React components (Can, Feature, AccessGate, etc.)
 │   │   ├── hooks/         # React hooks (usePermission, useFeature, etc.)
@@ -196,7 +196,7 @@ packages/
 │   │   ├── plugins/       # Built-in plugins
 │   │   └── utils/         # Internal utilities
 │   └── tests/             # Vitest tests
-├── devtools/              # @react-access-control/devtools
+├── devtools/              # @react-access-engine/devtools
 └── shared/                # Internal shared utilities (private)
 ```
 

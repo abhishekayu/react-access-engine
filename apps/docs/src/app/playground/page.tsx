@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { defineAccess, AccessProvider, Can, Feature, Experiment } from 'react-access-control';
-import type { AccessConfig } from 'react-access-control';
+import { defineAccess, AccessProvider, Can, Feature, Experiment } from 'react-access-engine';
+import type { AccessConfig } from 'react-access-engine';
 import {
   Shield,
   Flag,

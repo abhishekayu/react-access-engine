@@ -1,8 +1,8 @@
-# react-access-control — Architecture Document
+# react-access-engine — Architecture Document
 
 ## Product Positioning
 
-**react-access-control** is a unified React-first access and feature management platform.
+**react-access-engine** is a unified React-first access and feature management platform.
 
 It combines RBAC, ABAC, feature flags, experiments, policy evaluation, and subscription-gated
 access into a single, tree-shakeable, type-safe library with declarative components and hooks.
@@ -17,11 +17,11 @@ React applications cobble together:
 - Manual A/B test wiring
 - No unified audit trail
 
-**react-access-control** replaces all of this with one coherent, type-safe system.
+**react-access-engine** replaces all of this with one coherent, type-safe system.
 
 ### Differentiation
 
-| Dimension     | Typical RBAC lib    | Feature flag tool | react-access-control     |
+| Dimension     | Typical RBAC lib    | Feature flag tool | react-access-engine     |
 | ------------- | ------------------- | ----------------- | ------------------------ |
 | Access model  | Roles → permissions | Boolean flags     | RBAC + ABAC + policies   |
 | Feature flags | None                | Yes               | Built-in with rollouts   |

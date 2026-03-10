@@ -7,7 +7,7 @@ import {
   useAccess,
   useRole,
   usePermission,
-} from 'react-access-control';
+} from 'react-access-engine';
 
 const config = defineAccess({
   roles: ['admin', 'editor', 'viewer'] as const,
