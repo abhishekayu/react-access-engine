@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["example-*", "docs", "playground"]
+  "ignore": ["example-*", "@react-access-engine/docs", "@react-access-engine/playground"]
 }
