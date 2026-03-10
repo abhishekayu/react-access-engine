@@ -1,0 +1,150 @@
+export const metadata = {
+  title: 'DevTools',
+  description:
+    'Debug access checks, feature evaluations, and policy traces with the built-in DevTools overlay.',
+};
+
+# DevTools
+
+The `@react-access-control/devtools` package provides a real-time debugging overlay for inspecting access checks, feature evaluations, policy traces, and configuration.
+
+## Installation
+
+```bash
+npm install @react-access-control/devtools
+```
+
+## Setup
+
+Add the DevTools component inside your `<AccessProvider>`:
+
+```tsx
+import { AccessProvider } from 'react-access-control';
+import { AccessDevTools } from '@react-access-control/devtools';
+
+function App() {
+  return (
+    <AccessProvider config={config} user={user}>
+      <YourApp />
+      {process.env.NODE_ENV === 'development' && <AccessDevTools />}
+    </AccessProvider>
+  );
+}
+```
+
+> **Important:** Enable `debug: true` in your config to record events for the DevTools:
+
+```tsx
+const config = defineAccess({
+  // ...
+  debug: true,
+});
+```
+
+## DevTools Panels
+
+The overlay includes 6 tabbed panels:
+
+### 1. Access Checks
+
+Real-time log of all permission checks with:
+
+- Permission name
+- User who requested access
+- Resource attributes (ABAC)
+- Result (allowed/denied)
+- Timestamp
+
+### 2. Features
+
+Live view of all feature flag evaluations:
+
+- Feature name
+- Enabled/disabled status
+- Evaluation reason (static, rollout, role, plan, environment, dependency)
+- User context at evaluation time
+
+### 3. Policies
+
+Policy engine trace showing:
+
+- Permission being evaluated
+- Matched policy rule name
+- Rule effect (allow/deny)
+- Evaluation reason
+
+### 4. Config
+
+Full config snapshot viewer:
+
+- Current roles and permissions
+- Feature definitions
+- Experiment definitions
+- Policy rules
+- Plan hierarchy
+
+### 5. User
+
+Current user context inspector:
+
+- User ID
+- Assigned roles
+- Current plan
+- User attributes
+
+### 6. Experiments
+
+Experiment assignment overview:
+
+- Experiment ID
+- Assigned variant
+- Active status
+- Allocation details
+
+## Debug Engine (Programmatic)
+
+For programmatic access to debug information:
+
+```tsx
+import { useAccessDebug } from 'react-access-control';
+
+function MyDebugPanel() {
+  const { lastChecks, lastFeatureEvals, lastPolicyEvals, configSnapshot, timestamp } =
+    useAccessDebug();
+
+  return <pre>{JSON.stringify(lastChecks, null, 2)}</pre>;
+}
+```
+
+### Debug Engine API
+
+```tsx
+import { DebugEngine } from 'react-access-control';
+
+const engine = new DebugEngine();
+engine.setConfig(config);
+
+// Record events
+engine.recordAccessCheck(event);
+engine.recordFeatureEval(event);
+engine.recordPolicyEval(event);
+
+// Get all debug info
+const info = engine.getDebugInfo();
+
+// Subscribe to real-time events
+const unsubscribe = engine.subscribe((event) => {
+  console.log('Debug event:', event);
+});
+
+// Clear recorded events
+engine.clear();
+```
+
+The debug engine keeps a maximum of **100 entries per type** (FIFO), so it won't cause memory leaks in long-running applications.
+
+## Production Considerations
+
+- Only include `<AccessDevTools>` in **development builds**
+- The DevTools package is separate from the core, so it's **tree-shaken out of production** if you conditionally import it
+- Setting `debug: false` (or omitting it) disables event recording entirely

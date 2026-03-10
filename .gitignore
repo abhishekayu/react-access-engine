@@ -1,0 +1,35 @@
+# dependencies
+node_modules
+
+# build output
+dist
+.next
+.cache
+
+# turbo
+.turbo
+*.tsbuildinfo
+
+# test
+coverage
+
+# env
+.env
+.env.local
+.env.*.local
+
+# editor
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea
+
+# os
+.DS_Store
+Thumbs.db
+
+# debug
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*

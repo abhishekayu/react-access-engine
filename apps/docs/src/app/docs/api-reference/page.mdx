@@ -1,0 +1,242 @@
+export const metadata = {
+  title: 'API Reference',
+  description: 'Complete API reference for react-access-control hooks, components, and utilities.',
+};
+
+# API Reference
+
+## Provider
+
+### `<AccessProvider>`
+
+The root provider that initializes all engines and makes access checks available to the component tree.
+
+```tsx
+<AccessProvider config={config} user={user}>
+  {children}
+</AccessProvider>
+```
+
+| Prop       | Type           | Required | Description                  |
+| ---------- | -------------- | -------- | ---------------------------- |
+| `config`   | `AccessConfig` | ✅       | Config from `defineAccess()` |
+| `user`     | `UserContext`  | ✅       | Current user object          |
+| `children` | `ReactNode`    | ✅       | Child components             |
+
+Supports nesting (inner provider shadows outer). Emits a dev warning suggesting `mergeConfigs()` instead.
+
+---
+
+## Components
+
+### `<Can>`
+
+Declarative permission/role gate. Renders children only if the check passes.
+
+```tsx
+<Can permission="posts:write" fallback={<p>No access</p>}>
+  <Editor />
+</Can>
+```
+
+| Prop                     | Type                      | Default | Description                          |
+| ------------------------ | ------------------------- | ------- | ------------------------------------ |
+| `perform` / `permission` | `string`                  | —       | Single permission to check           |
+| `permissions`            | `string[]`                | —       | Multiple permissions                 |
+| `role`                   | `string`                  | —       | Single role check                    |
+| `roles`                  | `string[]`                | —       | Multiple roles                       |
+| `on` / `resource`        | `Record<string, unknown>` | —       | ABAC resource attributes             |
+| `policy`                 | `string`                  | —       | Policy evaluation                    |
+| `mode`                   | `'all' \| 'any'`          | `'all'` | How multiple conditions are combined |
+| `children`               | `ReactNode`               | —       | Content to render if allowed         |
+| `fallback`               | `ReactNode`               | —       | Content to render if denied          |
+
+### `<Feature>`
+
+Feature flag gate. Renders children only if the feature is enabled.
+
+```tsx
+<Feature name="betaEditor" fallback={<ClassicEditor />}>
+  <BetaEditor />
+</Feature>
+```
+
+| Prop       | Type        | Description          |
+| ---------- | ----------- | -------------------- |
+| `name`     | `string`    | Feature name         |
+| `children` | `ReactNode` | Render when enabled  |
+| `fallback` | `ReactNode` | Render when disabled |
+
+### `<AccessGate>`
+
+Multi-condition gate combining permissions, features, roles, and plans.
+
+```tsx
+<AccessGate permission="billing:manage" plan="pro" feature="newBilling">
+  <BillingPanel />
+</AccessGate>
+```
+
+| Prop         | Type                      | Description                         |
+| ------------ | ------------------------- | ----------------------------------- |
+| `permission` | `string`                  | Permission check                    |
+| `feature`    | `string`                  | Feature flag check                  |
+| `roles`      | `string[]`                | Role checks                         |
+| `plan`       | `string`                  | Plan tier check                     |
+| `resource`   | `Record<string, unknown>` | ABAC resource                       |
+| `mode`       | `'all' \| 'any'`          | Combination mode (default: `'all'`) |
+| `children`   | `ReactNode`               | Render when allowed                 |
+| `fallback`   | `ReactNode`               | Render when denied                  |
+
+### `<PermissionGuard>`
+
+Route-level guard that requires **all** specified permissions.
+
+```tsx
+<PermissionGuard permissions={['admin:access', 'settings:manage']} fallback={<Unauthorized />}>
+  <AdminSettings />
+</PermissionGuard>
+```
+
+### `<FeatureToggle>`
+
+Render-prop component providing feature evaluation details.
+
+```tsx
+<FeatureToggle name="newDashboard">
+  {({ enabled, reason }) => (
+    <p>
+      Feature is {enabled ? 'on' : 'off'} ({reason})
+    </p>
+  )}
+</FeatureToggle>
+```
+
+### `<Experiment>`
+
+A/B experiment gate that renders the assigned variant.
+
+```tsx
+<Experiment
+  id="checkout-flow"
+  variants={{
+    control: <ClassicCheckout />,
+    optimized: <NewCheckout />,
+  }}
+  fallback={<ClassicCheckout />}
+/>
+```
+
+---
+
+## Hooks
+
+### `useAccess()`
+
+Full context access — returns the complete access context.
+
+```ts
+const { user, config, roles, permissions, checkPermission, checkFeature, getExperiment } =
+  useAccess();
+```
+
+### `usePermission(permission, resource?)`
+
+Check a single permission. Returns `boolean`.
+
+```ts
+const canEdit = usePermission('posts:write');
+const canEditOwn = usePermission('posts:write', { ownerId: userId });
+```
+
+### `useRole()`
+
+Role checking utilities.
+
+```ts
+const { roles, hasRole, hasAnyRole, hasAllRoles } = useRole();
+
+hasRole('admin'); // boolean
+hasAnyRole(['admin', 'editor']); // boolean
+hasAllRoles(['editor', 'reviewer']); // boolean
+```
+
+### `useFeature(name)`
+
+Feature flag evaluation. Returns `{ enabled, reason }`.
+
+```ts
+const { enabled, reason } = useFeature('newDashboard');
+// reason: 'static' | 'rollout' | 'role' | 'plan' | 'environment' | 'dependency' | 'disabled'
+```
+
+### `usePolicy(permission, resource?)`
+
+Policy engine evaluation. Returns `{ allowed, matchedRule, reason }`.
+
+```ts
+const { allowed, matchedRule, reason } = usePolicy('documents:edit', { ownerId: 'user-1' });
+```
+
+### `useExperiment(id)`
+
+Experiment assignment. Returns `{ experimentId, variant, active }`.
+
+```ts
+const { variant, active } = useExperiment('checkout-flow');
+```
+
+### `usePlan()`
+
+Plan/subscription utilities.
+
+```ts
+const { plan, hasPlanAccess } = usePlan();
+
+hasPlanAccess('pro'); // true if user's plan >= 'pro'
+hasPlanAccess('enterprise'); // true if user's plan >= 'enterprise'
+```
+
+### `useRemoteConfig(baseConfig, loader)`
+
+Remote config loading with stale-while-revalidate.
+
+```ts
+const { config, loading, error, stale, lastLoadedAt, refresh } = useRemoteConfig(baseConfig, {
+  url: '/api/access-config',
+  pollInterval: 60_000,
+});
+```
+
+### `useAccessDebug()`
+
+Debug information for devtools integration.
+
+```ts
+const { lastChecks, lastFeatureEvals, lastPolicyEvals, configSnapshot, timestamp } =
+  useAccessDebug();
+```
+
+---
+
+## Utilities
+
+### `defineAccess(config)`
+
+Type-safe config factory. Returns the config unchanged but provides type inference.
+
+### `mergeConfigs(base, overrides)`
+
+Shallow-merges two configs. Objects are merged one level deep.
+
+### Type Inference Helpers
+
+```ts
+type Roles = InferRoles<typeof config>; // union of role strings
+type Perms = InferPermissions<typeof config>; // union of permission strings
+type Feats = InferFeatures<typeof config>; // union of feature names
+type Plans = InferPlans<typeof config>; // union of plan strings
+type Exps = InferExperiments<typeof config>; // union of experiment IDs
+```
+
+Use `as const` on arrays for literal type inference.

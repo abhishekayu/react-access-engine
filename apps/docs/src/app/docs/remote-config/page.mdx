@@ -1,0 +1,190 @@
+export const metadata = {
+  title: 'Remote Config',
+  description:
+    'Load and refresh access configuration from a remote API with stale-while-revalidate caching.',
+};
+
+# Remote Config
+
+Load access configuration from a remote API, with automatic polling, caching, and optional signature verification.
+
+## Basic Usage
+
+### Using the `useRemoteConfig` Hook
+
+```tsx
+import { defineAccess, AccessProvider, useRemoteConfig } from 'react-access-control';
+
+const baseConfig = defineAccess({
+  roles: ['admin', 'user'] as const,
+  permissions: {
+    admin: ['*'],
+    user: ['read'],
+  },
+});
+
+function AppWithRemoteConfig({ user }) {
+  const { config, loading, error, stale } = useRemoteConfig(baseConfig, {
+    url: '/api/access-config',
+    pollInterval: 60_000, // refresh every 60 seconds
+  });
+
+  if (loading && !stale) {
+    return <Spinner />;
+  }
+
+  return (
+    <AccessProvider config={config} user={user}>
+      {error && <Banner>Using cached config (last update failed)</Banner>}
+      <App />
+    </AccessProvider>
+  );
+}
+```
+
+## Remote Config Loader
+
+The loader can be configured with a URL or a custom load function:
+
+### URL-Based Loading
+
+```tsx
+const loader = {
+  url: '/api/access-config',
+  fetchOptions: {
+    headers: { Authorization: `Bearer ${token}` },
+  },
+  pollInterval: 30_000, // poll every 30 seconds
+};
+```
+
+### Custom Loader Function
+
+```tsx
+const loader = {
+  load: async () => {
+    const response = await fetch('/api/config', {
+      headers: { 'x-api-key': API_KEY },
+    });
+    const data = await response.json();
+    return {
+      features: data.features,
+      policies: data.policies,
+    };
+  },
+  pollInterval: 60_000,
+};
+```
+
+## Loader Options
+
+| Field             | Type                                                  | Description                                               |
+| ----------------- | ----------------------------------------------------- | --------------------------------------------------------- |
+| `url`             | `string`                                              | URL to fetch config from                                  |
+| `load`            | `() => Promise<Partial<AccessConfig>>`                | Custom loader function                                    |
+| `fetchOptions`    | `RequestInit`                                         | Fetch options (headers, etc.)                             |
+| `pollInterval`    | `number`                                              | Auto-refresh interval in ms                               |
+| `verifySignature` | `(payload, signature) => boolean \| Promise<boolean>` | Signature verification                                    |
+| `signatureHeader` | `string`                                              | Header name for signature (default: `x-config-signature`) |
+
+## Stale-While-Revalidate
+
+The hook implements stale-while-revalidate semantics:
+
+1. **First load**: Returns `loading: true` until the config is fetched
+2. **Subsequent reloads**: Returns the cached config with `stale: true` while refreshing
+3. **Error handling**: Keeps the last successful config, sets `error`
+
+```tsx
+const { config, loading, error, stale, lastLoadedAt, refresh } = useRemoteConfig(base, loader);
+
+// Manual refresh
+<button onClick={refresh}>Refresh Config</button>;
+
+// Show stale indicator
+{
+  stale && <Badge>Refreshing...</Badge>;
+}
+```
+
+## Signature Verification
+
+For security-critical applications, verify that remote config hasn't been tampered with:
+
+```tsx
+const loader = {
+  url: '/api/access-config',
+  signatureHeader: 'x-config-signature',
+  verifySignature: async (payload, signature) => {
+    // Verify HMAC or asymmetric signature
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(SECRET),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify'],
+    );
+    return crypto.subtle.verify(
+      'HMAC',
+      key,
+      hexToBuffer(signature),
+      encoder.encode(JSON.stringify(payload)),
+    );
+  },
+};
+```
+
+If verification fails, the config update is rejected and the previous config is retained.
+
+## Remote Config Engine (Advanced)
+
+For direct engine usage outside of React:
+
+```tsx
+import { RemoteConfigEngine } from 'react-access-control';
+
+const engine = new RemoteConfigEngine(loader);
+
+// Load once
+const config = await engine.load();
+
+// Start polling
+engine.startPolling();
+
+// Manual refresh
+await engine.refresh();
+
+// Properties
+engine.loading; // boolean
+engine.error; // Error | null
+engine.stale; // boolean
+engine.lastLoadedAt; // number | null
+engine.cachedConfig; // Partial<AccessConfig> | null
+
+// Cleanup
+engine.destroy();
+```
+
+## API Endpoint Example
+
+Your API should return a partial `AccessConfig` object:
+
+```json
+{
+  "features": {
+    "newDashboard": { "enabled": true, "rolloutPercentage": 50 },
+    "maintenance": { "enabled": false }
+  },
+  "policies": [
+    {
+      "name": "business-hours",
+      "effect": "deny",
+      "permissions": ["write"],
+      "condition": "outsideBusinessHours"
+    }
+  ]
+}
+```
+
+The remote config is **merged** with the base config using `mergeConfigs()`, so you only need to send the fields that differ from the base.

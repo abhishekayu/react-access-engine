@@ -1,0 +1,168 @@
+export const metadata = {
+  title: 'Feature Flags',
+  description:
+    'Configure and use feature flags with role targeting, plan gating, rollouts, and dependencies.',
+};
+
+# Feature Flags
+
+Feature flags let you control which features are visible to which users, without deploying new code.
+
+## Defining Features
+
+```tsx
+const config = defineAccess({
+  roles: ['admin', 'editor', 'viewer'] as const,
+  permissions: {
+    /* ... */
+  },
+  features: {
+    // Simple on/off
+    darkMode: { enabled: true },
+    maintenance: { enabled: false },
+
+    // Role-targeted
+    betaEditor: {
+      enabled: true,
+      roles: ['admin', 'editor'],
+    },
+
+    // Plan-gated
+    advancedAnalytics: {
+      enabled: true,
+      plans: ['pro', 'enterprise'],
+    },
+
+    // Environment-scoped
+    debugPanel: {
+      enabled: true,
+      environments: ['development', 'staging'],
+    },
+
+    // Percentage rollout (deterministic, SSR-safe)
+    newDashboard: {
+      rolloutPercentage: 25,
+    },
+
+    // Dependencies
+    newCheckout: {
+      enabled: true,
+      dependencies: ['newDashboard'], // only if newDashboard is also enabled
+    },
+
+    // Boolean shorthand
+    simpleFlag: true,
+  },
+
+  plans: ['free', 'pro', 'enterprise'] as const,
+  environment: { name: 'production' },
+});
+```
+
+## Feature Definition Options
+
+| Field               | Type             | Description                                 |
+| ------------------- | ---------------- | ------------------------------------------- |
+| `enabled`           | `boolean`        | Base enabled state                          |
+| `roles`             | `string[]`       | Enable only for these roles                 |
+| `plans`             | `string[]`       | Enable only for these plans                 |
+| `environments`      | `string[]`       | Enable only in these environments           |
+| `rolloutPercentage` | `number` (0–100) | Percentage-based rollout                    |
+| `dependencies`      | `string[]`       | Required features that must also be enabled |
+
+You can also use a simple `boolean` instead of a full definition object.
+
+## Evaluation Precedence
+
+Features are evaluated in this order:
+
+1. **Static** — `enabled: false` stops evaluation immediately
+2. **Environment** — Must match if `environments` is specified
+3. **Role** — User must have one of the specified roles
+4. **Plan** — User's plan must be in the specified plans
+5. **Dependencies** — All dependencies must be enabled (topological sort)
+6. **Rollout** — Deterministic hash of `userId + featureName` (SSR-safe)
+
+## Using in Components
+
+### `<Feature>` Component
+
+```tsx
+import { Feature } from 'react-access-control';
+
+<Feature name="betaEditor" fallback={<ClassicEditor />}>
+  <BetaEditor />
+</Feature>;
+```
+
+### `<FeatureToggle>` Render Prop
+
+```tsx
+import { FeatureToggle } from 'react-access-control';
+
+<FeatureToggle name="newDashboard">
+  {({ enabled, reason }) => (
+    <div>
+      <p>New Dashboard: {enabled ? '✅ Active' : '❌ Inactive'}</p>
+      <p>Reason: {reason}</p>
+    </div>
+  )}
+</FeatureToggle>;
+```
+
+### `useFeature` Hook
+
+```tsx
+import { useFeature } from 'react-access-control';
+
+function Dashboard() {
+  const { enabled, reason } = useFeature('newDashboard');
+
+  if (!enabled) {
+    return <LegacyDashboard />;
+  }
+  return <NewDashboard />;
+}
+```
+
+## Rollout Mechanism
+
+Rollouts use a **deterministic hash** of `userId + featureName`:
+
+- The same user always gets the same result (consistent experience)
+- SSR-safe — no `Math.random()`, works with server rendering
+- Rollout percentage is applied uniformly across users
+
+```tsx
+features: {
+  newCheckout: {
+    rolloutPercentage: 10,  // 10% of users
+  },
+}
+```
+
+## Feature Dependencies
+
+Features can depend on other features:
+
+```tsx
+features: {
+  baseFeature: { enabled: true },
+  dependentFeature: {
+    enabled: true,
+    dependencies: ['baseFeature'],  // only if baseFeature is on
+  },
+}
+```
+
+Dependencies are resolved via **topological sort**. Circular dependencies cause both features to be disabled.
+
+## Combining with `<AccessGate>`
+
+```tsx
+<AccessGate feature="newDashboard" permission="dashboard:view" plan="pro">
+  <PremiumDashboard />
+</AccessGate>
+```
+
+This only renders if: the feature is enabled **AND** the user has the permission **AND** the user is on the pro plan (or higher).

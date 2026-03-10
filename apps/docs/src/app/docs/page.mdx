@@ -1,0 +1,76 @@
+export const metadata = {
+  title: 'Introduction',
+  description: 'Learn about react-access-control — unified access control for React applications.',
+};
+
+# Introduction
+
+**react-access-control** is a unified, type-safe access control library for React that combines RBAC, ABAC,
+feature flags, A/B experiments, plan gating, remote config, and a plugin system into a single tree-shakeable package.
+
+## Why react-access-control?
+
+Modern applications need multiple layers of access control:
+
+- **Who can see this?** → Role-based access (RBAC)
+- **Under what conditions?** → Attribute-based policies (ABAC)
+- **Is this feature live?** → Feature flags
+- **Which variant?** → A/B experiments
+- **What plan are they on?** → Subscription gating
+- **Should we refresh rules?** → Remote config
+
+Most teams combine 3–4 separate libraries or services for this. **react-access-control** replaces them all
+with a single `<AccessProvider>`, a single config object, and a unified set of hooks and components.
+
+## Key Features
+
+- **RBAC** — Roles, permissions, wildcard matching (`posts:*`, `*`)
+- **ABAC** — Declarative condition-based policy rules with custom operators
+- **Feature Flags** — Static, role-gated, plan-gated, environment-scoped, with rollouts and dependencies
+- **Experiments** — Deterministic SSR-safe A/B assignment with allocation control
+- **Plan Gating** — Hierarchical subscription tiers with automatic comparison
+- **Remote Config** — Fetch and merge config from an API with stale-while-revalidate
+- **Plugin System** — Hooks for audit logging, analytics, custom operators
+- **DevTools** — Real-time overlay for debugging access checks, features, policies
+- **Type-Safe** — Full TypeScript inference with `InferRoles`, `InferPermissions`, etc.
+- **SSR-Ready** — Works with Next.js App Router (all components are `'use client'`)
+- **Tree-Shakeable** — Import only what you use — zero dependencies
+
+## Quick Example
+
+```tsx
+import { defineAccess, AccessProvider, Can, Feature } from 'react-access-control';
+
+const config = defineAccess({
+  roles: ['admin', 'editor', 'viewer'] as const,
+  permissions: {
+    admin: ['*'],
+    editor: ['posts:read', 'posts:write'],
+    viewer: ['posts:read'],
+  },
+  features: {
+    newEditor: { enabled: true, roles: ['admin'] },
+  },
+});
+
+const user = { id: 'user-1', roles: ['editor'] as const };
+
+function App() {
+  return (
+    <AccessProvider config={config} user={user}>
+      <Can permission="posts:write">
+        <button>Edit Post</button>
+      </Can>
+      <Feature name="newEditor" fallback={<ClassicEditor />}>
+        <NewEditor />
+      </Feature>
+    </AccessProvider>
+  );
+}
+```
+
+## Next Steps
+
+- [Installation](/docs/installation) — Add the package to your project
+- [Quick Start](/docs/quickstart) — Build your first access-controlled app
+- [Core Concepts](/docs/core-concepts) — Understand the architecture

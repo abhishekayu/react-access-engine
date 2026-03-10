@@ -1,0 +1,131 @@
+export const metadata = {
+  title: 'Core Concepts',
+  description: 'Understand the architecture and core concepts of react-access-control.',
+};
+
+# Core Concepts
+
+## Architecture Overview
+
+react-access-control is built around a single `<AccessProvider>` that initializes several specialized engines:
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  AccessProvider                      │
+│                                                     │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐            │
+│  │   Role   │ │Permission│ │ Feature  │            │
+│  │  Engine  │ │  Engine  │ │  Engine  │            │
+│  └──────────┘ └──────────┘ └──────────┘            │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐            │
+│  │  Policy  │ │   Plan   │ │Experiment│            │
+│  │  Engine  │ │  Engine  │ │  Engine  │            │
+│  └──────────┘ └──────────┘ └──────────┘            │
+│  ┌──────────┐ ┌──────────┐                         │
+│  │  Plugin  │ │  Debug   │                         │
+│  │  Engine  │ │  Engine  │                         │
+│  └──────────┘ └──────────┘                         │
+└─────────────────────────────────────────────────────┘
+```
+
+## Config Object
+
+All access rules are defined in a single config object using `defineAccess()`:
+
+```ts
+const config = defineAccess({
+  roles: [...],           // Role definitions
+  permissions: {...},     // Role → permission mapping
+  features: {...},        // Feature flag definitions
+  experiments: {...},     // A/B experiment definitions
+  policies: [...],        // ABAC policy rules
+  plans: [...],           // Plan hierarchy (low → high)
+  environment: {...},     // Environment context
+  plugins: [...],         // Plugin instances
+  debug: true,            // Enable debug engine
+});
+```
+
+## User Context
+
+The user object describes the current authenticated user:
+
+```ts
+const user = {
+  id: 'user-42', // Required: unique identifier
+  roles: ['editor'] as const, // Required: assigned roles
+  plan: 'pro', // Optional: subscription plan
+  attributes: {
+    // Optional: ABAC attributes
+    department: 'engineering',
+    country: 'US',
+    joinedAt: '2023-01-15',
+  },
+};
+```
+
+## Permission Resolution
+
+Permissions are resolved in this order:
+
+1. **RBAC Check** — Does the user's role grant this permission?
+   - Exact match: `posts:write` matches `posts:write`
+   - Namespace wildcard: `posts:*` matches `posts:write`
+   - Global wildcard: `*` matches everything
+2. **Policy Check** — If ABAC policies exist, do they allow it?
+   - Policies can override RBAC (a policy `deny` blocks even if RBAC allows)
+   - Policy rules are sorted by priority (highest first), first match wins
+   - Default: deny if policies exist but none match
+
+## Feature Evaluation
+
+Features are evaluated with this precedence:
+
+1. **Static** — `enabled: true/false`
+2. **Environment** — `environments: ['production']`
+3. **Role** — `roles: ['admin', 'beta-tester']`
+4. **Plan** — `plans: ['pro', 'enterprise']`
+5. **Dependencies** — `dependencies: ['otherFeature']` (topologically resolved)
+6. **Rollout** — `rolloutPercentage: 25` (deterministic hash, SSR-safe)
+
+If a feature has dependencies, they're resolved via topological sort. Circular dependencies result in the feature being disabled.
+
+## Hooks vs Components
+
+react-access-control provides both declarative components and imperative hooks:
+
+| Use Case                   | Component                 | Hook              |
+| -------------------------- | ------------------------- | ----------------- |
+| Show/hide UI by permission | `<Can>`                   | `usePermission()` |
+| Feature flag gate          | `<Feature>`               | `useFeature()`    |
+| Multi-condition gate       | `<AccessGate>`            | `useAccess()`     |
+| Route protection           | `<PermissionGuard>`       | `usePermission()` |
+| A/B variant rendering      | `<Experiment>`            | `useExperiment()` |
+| Plan-gated UI              | `<AccessGate plan="pro">` | `usePlan()`       |
+
+**Use components** for simple show/hide logic. **Use hooks** when you need programmatic control (e.g., conditional API calls, analytics, styling).
+
+## Config Merging
+
+Use `mergeConfigs()` to combine base configs with overrides:
+
+```ts
+import { defineAccess, mergeConfigs } from 'react-access-control';
+
+const baseConfig = defineAccess({
+  roles: ['admin', 'user'] as const,
+  permissions: { admin: ['*'], user: ['read'] },
+});
+
+const withFeatures = mergeConfigs(baseConfig, {
+  features: { darkMode: { enabled: true } },
+});
+```
+
+This is useful for layering environment-specific config on top of a base config, or for remote config merging.
+
+## Next Steps
+
+- [API Reference](/docs/api-reference) — Full hook and component API
+- [Policies & ABAC](/docs/policies) — Attribute-based access control
+- [Feature Flags](/docs/feature-flags) — Advanced feature configuration

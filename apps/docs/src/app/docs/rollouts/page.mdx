@@ -1,0 +1,183 @@
+export const metadata = {
+  title: 'Rollouts & Segments',
+  description: 'Progressive rollouts, user segmentation, and environment-based targeting.',
+};
+
+# Rollouts & Segments
+
+Control how features are gradually released to users, targeted to specific segments, and scoped to environments.
+
+## Percentage Rollouts
+
+Roll out a feature to a fraction of users:
+
+```tsx
+const config = defineAccess({
+  // ...
+  features: {
+    newOnboarding: {
+      rolloutPercentage: 10, // 10% of users
+    },
+    redesignedNav: {
+      rolloutPercentage: 50, // 50% of users
+    },
+  },
+});
+```
+
+### How Rollouts Work
+
+1. A **deterministic hash** is computed from `userId + featureName`
+2. The hash produces a value between 0–99
+3. If the value is less than `rolloutPercentage`, the feature is enabled
+
+This means:
+
+- The **same user** always sees the **same result** (no flickering)
+- Different features roll out to **different user subsets**
+- Works identically on **server and client** (SSR-safe, no `Math.random()`)
+
+### Progressive Rollout Strategy
+
+Start small and increase gradually:
+
+```tsx
+// Week 1: Internal testing
+{
+  rolloutPercentage: 1;
+}
+
+// Week 2: Canary
+{
+  rolloutPercentage: 5;
+}
+
+// Week 3: Limited rollout
+{
+  rolloutPercentage: 25;
+}
+
+// Week 4: Majority
+{
+  rolloutPercentage: 75;
+}
+
+// Week 5: Full rollout
+{
+  enabled: true;
+}
+```
+
+## User Segmentation
+
+### By Role
+
+Target features to specific roles:
+
+```tsx
+features: {
+  adminDashboard: {
+    enabled: true,
+    roles: ['admin', 'superadmin'],
+  },
+  betaFeature: {
+    enabled: true,
+    roles: ['beta-tester'],
+  },
+}
+```
+
+### By Plan
+
+Gate features by subscription tier:
+
+```tsx
+features: {
+  advancedReports: {
+    enabled: true,
+    plans: ['pro', 'enterprise'],
+  },
+  apiAccess: {
+    enabled: true,
+    plans: ['enterprise'],
+  },
+}
+
+// plans hierarchy: ['free', 'pro', 'enterprise']
+```
+
+### By Environment
+
+Scope features to specific environments:
+
+```tsx
+const config = defineAccess({
+  // ...
+  features: {
+    debugTools: {
+      enabled: true,
+      environments: ['development', 'staging'],
+    },
+    experimentalAPI: {
+      enabled: true,
+      environments: ['staging'],
+    },
+  },
+  environment: { name: process.env.NODE_ENV ?? 'development' },
+});
+```
+
+## Combining Segments
+
+Targeting conditions are **AND**-combined. All conditions must pass:
+
+```tsx
+features: {
+  exclusiveFeature: {
+    enabled: true,
+    roles: ['admin'],                      // AND user is admin
+    plans: ['enterprise'],                 // AND user is on enterprise
+    environments: ['production'],          // AND running in production
+    rolloutPercentage: 50,                 // AND in the 50% rollout bucket
+  },
+}
+```
+
+## Feature Dependencies
+
+Create feature chains where one feature requires another:
+
+```tsx
+features: {
+  coreRedesign: { enabled: true },
+  newSidebar: {
+    enabled: true,
+    dependencies: ['coreRedesign'],        // requires coreRedesign
+  },
+  sidebarWidgets: {
+    enabled: true,
+    dependencies: ['newSidebar'],          // requires newSidebar (and transitively coreRedesign)
+  },
+}
+```
+
+Dependencies are resolved via **topological sort**:
+
+- If `coreRedesign` is disabled, both `newSidebar` and `sidebarWidgets` are also disabled
+- Circular dependencies cause all involved features to be disabled (with a dev warning)
+
+## Checking Rollout Status
+
+Use the `<FeatureToggle>` render prop to see why a feature is enabled or disabled:
+
+```tsx
+<FeatureToggle name="newOnboarding">
+  {({ enabled, reason }) => (
+    <div>
+      <p>Status: {enabled ? 'Enabled' : 'Disabled'}</p>
+      <p>Reason: {reason}</p>
+      {/* reason: 'static' | 'rollout' | 'role' | 'plan' | 'environment' | 'dependency' | 'disabled' */}
+    </div>
+  )}
+</FeatureToggle>
+```

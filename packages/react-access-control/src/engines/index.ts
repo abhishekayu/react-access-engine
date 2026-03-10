@@ -1,0 +1,12 @@
+export { hasRole, hasAnyRole, hasAllRoles, getPermissionsForUser } from './role-engine';
+export { hasPermission, hasAnyPermission, hasAllPermissions } from './permission-engine';
+export { evaluateFeature, evaluateAllFeatures } from './feature-engine';
+export type { FeatureEvalResult } from './feature-engine';
+export { evaluatePolicy } from './policy-engine';
+export type { PolicyEvalResult } from './policy-engine';
+export { assignExperiment } from './experiment-engine';
+export type { ExperimentAssignment } from './experiment-engine';
+export { hasPlanAccess, getPlanTier } from './plan-engine';
+export { PluginEngine } from './plugin-engine';
+export { DebugEngine } from './debug-engine';
+export type { DebugEvent, DebugEventType, DebugListener } from './debug-engine';
