@@ -391,6 +391,125 @@ console.log(debugInfo.lastFeatureEvals); // Recent feature evaluations
 
 ## Real-World Examples
 
+### E-commerce Store
+
+A complete e-commerce example — roles, plans, feature flags, and A/B tests in one config:
+
+```typescript
+import { defineAccess, AccessProvider, Allow, useAccess } from 'react-access-engine';
+
+// 1. One config for your entire store
+const config = defineAccess({
+  roles: ['customer', 'seller', 'admin', 'support'],
+  permissions: {
+    customer: ['products:browse', 'cart:manage', 'orders:own', 'reviews:write', 'wishlist:manage'],
+    seller:   ['products:browse', 'products:create', 'inventory:manage', 'analytics:own-store'],
+    admin:    ['*'],
+    support:  ['orders:view-all', 'orders:refund', 'reviews:moderate', 'tickets:manage'],
+  },
+  plans: ['free', 'plus', 'premium'],
+  features: {
+    'quick-buy':          true,                                           // Buy-now button
+    'wishlist':           true,                                           // Wishlist
+    'ai-recommendations': { enabled: true, allowedPlans: ['premium'] },   // Premium-only AI
+    'live-chat':          { enabled: true, allowedPlans: ['plus', 'premium'] },
+    'loyalty-points':     { enabled: true, allowedPlans: ['plus', 'premium'] },
+    'bulk-discount':      { enabled: true, allowedRoles: ['seller'] },    // Seller-only
+  },
+  experiments: {
+    'checkout-layout': {
+      id: 'checkout-layout',
+      variants: ['classic', 'one-page', 'step-wizard'],
+      defaultVariant: 'classic',
+      active: true,
+      allocation: { classic: 34, 'one-page': 33, 'step-wizard': 33 },
+    },
+  },
+});
+
+// 2. Wrap your app
+function App() {
+  const user = useCurrentUser(); // your auth hook
+  return (
+    <AccessProvider config={config} user={{ id: user.id, roles: user.roles, plan: user.plan }}>
+      <Store />
+    </AccessProvider>
+  );
+}
+```
+
+```tsx
+// 3. Protect anything — products, checkout, dashboards
+function ProductCard({ product }) {
+  const { can, has } = useAccess();
+
+  return (
+    <div>
+      <h3>
+        {product.name} — ${product.price}
+      </h3>
+
+      <Allow permission="cart:manage">
+        <button>🛒 Add to Cart</button>
+      </Allow>
+
+      {has('quick-buy') && can('cart:manage') && <button>⚡ Buy Now</button>}
+
+      <Allow feature="wishlist">
+        <button>❤️ Wishlist</button>
+      </Allow>
+    </div>
+  );
+}
+
+// Premium-only AI recommendations with upgrade prompt
+function AIRecommendations() {
+  return (
+    <Allow feature="ai-recommendations" fallback={<UpgradePrompt plan="premium" />}>
+      <div>🤖 AI Picks: Wireless Earbuds, Phone Case, USB-C Cable</div>
+    </Allow>
+  );
+}
+
+// Seller-only dashboard — hidden for customers
+function SellerDashboard() {
+  return (
+    <Allow role="seller">
+      <div>
+        <h3>📦 Seller Dashboard</h3>
+        <Allow permission="inventory:manage">
+          <p>✅ Manage inventory</p>
+        </Allow>
+        <Allow permission="analytics:own-store">
+          <p>✅ Store analytics</p>
+        </Allow>
+        <Allow feature="bulk-discount">
+          <p>✅ Bulk discount pricing</p>
+        </Allow>
+      </div>
+    </Allow>
+  );
+}
+
+// Support tools — only visible to support agents
+function SupportTools() {
+  return (
+    <Allow role="support">
+      <div>
+        <Allow permission="orders:refund">
+          <button>Process Refund</button>
+        </Allow>
+        <Allow permission="reviews:moderate">
+          <button>Moderate Reviews</button>
+        </Allow>
+      </div>
+    </Allow>
+  );
+}
+```
+
+> 📂 Full runnable example: [`examples/ecommerce`](examples/ecommerce) — switch between Customer, Seller, Admin, and Support users to see everything change in real time.
+
 ### SaaS Dashboard
 
 ```tsx
@@ -546,6 +665,7 @@ react-access-engine/
 │   └── playground/            # Interactive playground
 ├── examples/
 │   ├── basic/                 # Simple RBAC example
+│   ├── ecommerce/             # E-commerce store (roles, plans, flags, A/B)
 │   ├── nextjs/                # Next.js App Router integration
 │   ├── saas-dashboard/        # SaaS with plan gating & multi-role
 │   ├── feature-rollout/       # Percentage rollouts & feature gates
@@ -593,19 +713,19 @@ All contributions — from bug reports to documentation to code — are welcome.
 ## Comparison
 
 | Feature              | react-access-engine | RBAC Library | Feature Flag Service | DIY |
-| -------------------- | :------------------: | :----------: | :------------------: | :-: |
-| RBAC with wildcards  |          ✅          |      ✅      |          ❌          | ⚠️  |
-| ABAC / Policy engine |          ✅          |      ❌      |          ❌          | ⚠️  |
-| Feature flags        |          ✅          |      ❌      |          ✅          | ❌  |
-| A/B Experiments      |          ✅          |      ❌      |          ⚠️          | ❌  |
-| Plan gating          |          ✅          |      ❌      |          ❌          | ⚠️  |
-| Remote config        |          ✅          |      ❌      |          ✅          | ❌  |
-| Plugin system        |          ✅          |      ❌      |          ❌          | ❌  |
-| DevTools overlay     |          ✅          |      ❌      |          ⚠️          | ❌  |
-| SSR-safe (Next.js)   |          ✅          |      ⚠️      |          ⚠️          | ⚠️  |
-| Tree-shakeable       |          ✅          |      ✅      |          ❌          | ✅  |
-| Zero dependencies    |          ✅          |      ✅      |          ❌          | ✅  |
-| Type-safe inference  |          ✅          |      ❌      |          ❌          | ⚠️  |
+| -------------------- | :-----------------: | :----------: | :------------------: | :-: |
+| RBAC with wildcards  |         ✅          |      ✅      |          ❌          | ⚠️  |
+| ABAC / Policy engine |         ✅          |      ❌      |          ❌          | ⚠️  |
+| Feature flags        |         ✅          |      ❌      |          ✅          | ❌  |
+| A/B Experiments      |         ✅          |      ❌      |          ⚠️          | ❌  |
+| Plan gating          |         ✅          |      ❌      |          ❌          | ⚠️  |
+| Remote config        |         ✅          |      ❌      |          ✅          | ❌  |
+| Plugin system        |         ✅          |      ❌      |          ❌          | ❌  |
+| DevTools overlay     |         ✅          |      ❌      |          ⚠️          | ❌  |
+| SSR-safe (Next.js)   |         ✅          |      ⚠️      |          ⚠️          | ⚠️  |
+| Tree-shakeable       |         ✅          |      ✅      |          ❌          | ✅  |
+| Zero dependencies    |         ✅          |      ✅      |          ❌          | ✅  |
+| Type-safe inference  |         ✅          |      ❌      |          ❌          | ⚠️  |
 
 ## Community
 
