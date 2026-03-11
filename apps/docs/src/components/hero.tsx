@@ -7,30 +7,38 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { FadeIn } from './fade-in';
 
-const heroCode = `import { AccessProvider, Can, Feature } from 'react-access-engine';
+const heroCode = `import { defineAccess, AccessProvider, Allow, Feature }
+  from 'react-access-engine';
 
 const config = defineAccess({
-  roles: ['admin', 'editor', 'viewer'] as const,
+  roles: ['customer', 'seller', 'admin'],
   permissions: {
-    admin:  ['*'],
-    editor: ['posts:read', 'posts:write', 'posts:publish'],
-    viewer: ['posts:read'],
+    customer: ['products:browse', 'cart:manage', 'orders:own'],
+    seller:   ['products:create', 'inventory:manage'],
+    admin:    ['*'],
   },
+  plans: ['free', 'plus', 'premium'],
   features: {
-    darkMode:    { enabled: true },
-    betaEditor:  { enabled: true, roles: ['admin'] },
-    newDashboard: { rolloutPercentage: 25 },
+    'quick-buy':  true,
+    'ai-recs':    { enabled: true, allowedPlans: ['premium'] },
+    'live-chat':  { enabled: true, allowedPlans: ['plus', 'premium'] },
   },
+  policies: [{
+    id: 'seller-own-products',
+    effect: 'allow',
+    permissions: ['products:edit'],
+    condition: ({ user, resource }) => user.id === resource.sellerId,
+  }],
 });
 
 function App() {
   return (
     <AccessProvider config={config} user={user}>
-      <Can permission="posts:write">
-        <EditorPanel />
-      </Can>
-      <Feature name="betaEditor" fallback={<ClassicEditor />}>
-        <BetaEditor />
+      <Allow permission="cart:manage">
+        <CartButton />
+      </Allow>
+      <Feature name="ai-recs" fallback={<UpgradeBanner />}>
+        <AIRecommendations />
       </Feature>
     </AccessProvider>
   );
@@ -39,47 +47,63 @@ function App() {
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 grid-pattern" />
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-white/95 to-white dark:from-zinc-950 dark:via-zinc-950/95 dark:to-zinc-950" />
+      {/* 3D perspective grid floor */}
+      <div className="hero-3d-wrapper absolute inset-0 overflow-hidden">
+        <div className="hero-3d-grid" />
+      </div>
 
+      {/* Floating gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="orb-1 absolute -top-20 left-[15%] h-72 w-72 rounded-full bg-blue-500/10 blur-3xl dark:bg-blue-500/15" />
+        <div className="orb-2 absolute top-10 right-[10%] h-80 w-80 rounded-full bg-violet-500/10 blur-3xl dark:bg-violet-500/15" />
+        <div className="orb-3 absolute bottom-10 left-[40%] h-64 w-64 rounded-full bg-pink-500/8 blur-3xl dark:bg-pink-500/10" />
+      </div>
+
+      {/* Radial fade overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-white dark:from-zinc-950/60 dark:via-transparent dark:to-zinc-950" />
+
+      {/* Horizon glow */}
+      <div className="hero-horizon" />
+
+      {/* Content */}
       <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-24 sm:px-6 sm:pt-32 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Left — Text */}
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div>
             <FadeIn delay={0}>
               <Badge
-                variant="secondary"
-                className="mb-6 border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-400"
+                variant="outline"
+                className="mb-5 border-blue-200 bg-blue-50/50 text-[11px] font-medium text-blue-600 dark:border-blue-800/50 dark:bg-blue-950/30 dark:text-blue-400"
               >
-                v1.0 — Production Ready
+                v1.0 Production Ready
               </Badge>
             </FadeIn>
 
             <FadeIn delay={0.1}>
-              <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl dark:text-white">
-                Unified <span className="gradient-text">Access Control</span> for React
+              <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl lg:text-[3.25rem] dark:text-white">
+                Unified{' '}
+                <span className="gradient-text">Access Control</span>{' '}
+                for React
               </h1>
             </FadeIn>
 
             <FadeIn delay={0.2}>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+              <p className="mt-5 max-w-lg text-[15px] leading-7 text-zinc-500 dark:text-zinc-400">
                 RBAC, ABAC, feature flags, A/B experiments, plan gating, and remote config — all in
-                a single, type-safe, tree-shakeable package. SSR-ready for Next.js App Router.
+                a single, type-safe, tree-shakeable package.
               </p>
             </FadeIn>
 
             <FadeIn delay={0.3}>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Button asChild>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Button asChild size="default">
                   <Link href="/docs/quickstart">
                     Get Started
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </Button>
-                <Button variant="secondary" asChild>
+                <Button variant="secondary" asChild size="default">
                   <a
-                    href="https://github.com/example/react-access-engine"
+                    href="https://github.com/abhishekayu/react-access-engine"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -87,7 +111,7 @@ export function Hero() {
                     GitHub
                   </a>
                 </Button>
-                <Button variant="secondary" asChild>
+                <Button variant="secondary" asChild size="default">
                   <a
                     href="https://www.npmjs.com/package/react-access-engine"
                     target="_blank"
@@ -101,20 +125,37 @@ export function Hero() {
             </FadeIn>
 
             <FadeIn delay={0.4}>
-              {/* Install command */}
-              <div className="mt-8 inline-flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-950 px-4 py-2.5 dark:border-zinc-700">
+              <div className="mt-7 inline-flex items-center gap-3 rounded-lg border border-zinc-200/80 bg-zinc-900 px-4 py-2.5 shadow-lg shadow-zinc-900/5 dark:border-zinc-700 dark:bg-zinc-800 dark:shadow-black/20">
                 <code className="text-sm text-zinc-300">
                   <span className="text-green-400">$</span> npm install react-access-engine
                 </code>
               </div>
             </FadeIn>
+
+            <FadeIn delay={0.5}>
+              <div className="mt-8 flex items-center gap-6 text-[13px] text-zinc-400">
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                  <span>220 tests</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2 w-2 rounded-full bg-blue-500" />
+                  <span>~4KB gzipped</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2 w-2 rounded-full bg-violet-500" />
+                  <span>Zero deps</span>
+                </div>
+              </div>
+            </FadeIn>
           </div>
 
-          {/* Right — Code example */}
           <FadeIn direction="right" delay={0.2} className="relative hidden lg:block">
-            <div className="absolute -inset-4 rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-2xl" />
             <div className="relative">
-              <CodeBlock code={heroCode} language="tsx" filename="App.tsx" />
+              <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-blue-500/10 via-violet-500/10 to-pink-500/10 blur-xl dark:from-blue-500/15 dark:via-violet-500/15 dark:to-pink-500/10" />
+              <div className="relative">
+                <CodeBlock code={heroCode} language="tsx" filename="App.tsx" />
+              </div>
             </div>
           </FadeIn>
         </div>

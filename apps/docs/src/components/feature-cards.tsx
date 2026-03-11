@@ -57,29 +57,29 @@ const features = [
 
 export function FeatureCards() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-white">
+        <h2 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl dark:text-white">
           Everything you need for access control
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
+        <p className="mx-auto mt-3 max-w-xl text-[15px] text-zinc-500 dark:text-zinc-400">
           Stop stitching together RBAC libraries, feature flag services, and experiment platforms.
-          One package, one provider, one mental model.
         </p>
       </div>
 
-      <StaggerContainer className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <StaggerContainer className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {features.map((feature) => (
           <StaggerItem key={feature.title}>
-            <Card className="group h-full transition-all hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/5 dark:hover:border-blue-700">
-              <CardHeader className="pb-2">
-                <div className="mb-2 inline-flex rounded-lg bg-blue-50 p-2.5 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
-                  <feature.icon className="h-5 w-5" />
+            <Card className="group relative h-full overflow-hidden border-zinc-200/80 transition-all duration-300 hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-200/50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:shadow-zinc-900/50">
+              <div className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-pink-500/5 dark:from-blue-500/10 dark:via-violet-500/10 dark:to-pink-500/5" />
+              <CardHeader className="relative pb-2">
+                <div className="mb-2 inline-flex rounded-md bg-zinc-100 p-2 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                  <feature.icon className="h-4 w-4" />
                 </div>
-                <CardTitle className="text-base">{feature.title}</CardTitle>
+                <CardTitle className="text-sm">{feature.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+              <CardContent className="relative">
+                <p className="text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">
                   {feature.description}
                 </p>
               </CardContent>

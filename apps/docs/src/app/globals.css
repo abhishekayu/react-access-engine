@@ -17,7 +17,6 @@
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Fira Code", monospace;
 }
 
-/* Smooth dark mode transitions */
 html {
   scroll-behavior: smooth;
 }
@@ -37,21 +36,22 @@ html.dark {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a1a1aa;
+  background: #d4d4d8;
   border-radius: 3px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #52525b;
+  background: #3f3f46;
 }
 
-/* Code block styling */
+/* Shiki code block styling */
 .shiki {
   padding: 1rem 1.25rem;
   border-radius: 0.5rem;
   overflow-x: auto;
   font-size: 0.875rem;
   line-height: 1.7;
+  background: transparent !important;
 }
 
 .shiki code {
@@ -59,6 +59,16 @@ html.dark {
   padding: 0 !important;
   font-size: inherit;
   color: inherit;
+}
+
+/* Shiki dual-theme: class-based dark mode switching */
+html.dark .shiki,
+html.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
 /* Gradient text utility */
@@ -69,34 +79,85 @@ html.dark {
   background-clip: text;
 }
 
-/* Animated gradient background */
-.gradient-bg {
-  background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #8b5cf6, #1e3a8a);
-  background-size: 400% 400%;
-  animation: gradient-shift 15s ease infinite;
-}
-
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Grid pattern for hero */
+/* Grid pattern */
 .grid-pattern {
   background-image:
-    linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
   background-size: 4rem 4rem;
 }
 
 .dark .grid-pattern {
   background-image:
-    linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+    linear-gradient(to right, rgba(99, 102, 241, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
 }
 
-/* Blinking cursor animation */
+/* 3D perspective grid */
+.hero-3d-wrapper {
+  perspective: 800px;
+  perspective-origin: 50% 40%;
+}
+
+.hero-3d-grid {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(55deg) translateZ(0);
+  transform-origin: 50% 100%;
+  background-image:
+    linear-gradient(to right, rgba(99, 102, 241, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.12) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  mask-image: linear-gradient(to top, black 5%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to top, black 5%, transparent 70%);
+}
+
+.dark .hero-3d-grid {
+  background-image:
+    linear-gradient(to right, rgba(139, 92, 246, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 92, 246, 0.15) 1px, transparent 1px);
+}
+
+/* Floating orbs */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-8px) translateX(-5px); }
+  75% { transform: translateY(-25px) translateX(8px); }
+}
+
+@keyframes float-slower {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  33% { transform: translateY(-15px) translateX(-12px); }
+  66% { transform: translateY(-30px) translateX(6px); }
+}
+
+.orb-1 {
+  animation: float-slow 8s ease-in-out infinite;
+}
+.orb-2 {
+  animation: float-slower 10s ease-in-out infinite;
+}
+.orb-3 {
+  animation: float-slow 12s ease-in-out infinite reverse;
+}
+
+/* Horizon glow line */
+.hero-horizon {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.5), transparent);
+}
+
+.dark .hero-horizon {
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.6), rgba(236, 72, 153, 0.4), transparent);
+}
+
+/* Blinking cursor */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }

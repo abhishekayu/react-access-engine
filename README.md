@@ -70,17 +70,70 @@ yarn add react-access-engine
 import { defineAccess } from 'react-access-engine';
 
 const config = defineAccess({
-  roles: ['admin', 'editor', 'viewer'],
+  roles: ['customer', 'seller', 'admin', 'support'],
   permissions: {
+    customer: ['products:browse', 'cart:manage', 'orders:own', 'reviews:write', 'wishlist:manage'],
+    seller: [
+      'products:browse',
+      'products:create',
+      'products:edit-own',
+      'inventory:manage',
+      'analytics:own-store',
+      'coupons:create',
+    ],
     admin: ['*'],
-    editor: ['articles:read', 'articles:write'],
-    viewer: ['articles:read'],
+    support: ['orders:view-all', 'orders:refund', 'reviews:moderate', 'tickets:manage'],
   },
+  plans: ['free', 'plus', 'premium'],
   features: {
-    'dark-mode': true,
-    'new-editor': { rolloutPercentage: 50 },
+    'quick-buy': true,
+    wishlist: true,
+    'ai-recommendations': { enabled: true, allowedPlans: ['premium'] },
+    'live-chat': { enabled: true, allowedPlans: ['plus', 'premium'] },
+    'loyalty-points': { enabled: true, allowedPlans: ['plus', 'premium'] },
+    'bulk-discount': { enabled: true, allowedRoles: ['seller'] },
   },
-  plans: ['free', 'pro', 'enterprise'],
+  experiments: {
+    'checkout-layout': {
+      id: 'checkout-layout',
+      variants: ['classic', 'one-page', 'step-wizard'],
+      defaultVariant: 'classic',
+      active: true,
+      allocation: { classic: 34, 'one-page': 33, 'step-wizard': 33 },
+    },
+  },
+  policies: [
+    {
+      id: 'seller-own-products',
+      effect: 'allow',
+      permissions: ['products:edit', 'products:delete'],
+      condition: ({ user, resource }) => user.id === resource.sellerId,
+      description: 'Sellers can only edit/delete their own products',
+    },
+    {
+      id: 'refund-time-limit',
+      effect: 'deny',
+      permissions: ['orders:refund'],
+      condition: ({ resource }) => {
+        const daysSinceOrder = (Date.now() - resource.orderedAt) / 86400000;
+        return daysSinceOrder > 30;
+      },
+      priority: 100,
+      description: 'Block refunds after 30 days',
+    },
+  ],
+  plugins: [
+    {
+      name: 'store-analytics',
+      onAccessCheck: (event) => {
+        console.log(`[STORE] ${event.permission}: ${event.granted ? '✅' : '❌'}`);
+      },
+      onFeatureEvaluate: (event) => {
+        console.log(`[FLAG] ${event.feature}: ${event.enabled ? 'ON' : 'OFF'}`);
+      },
+    },
+  ],
+  debug: true,
 });
 ```
 
@@ -90,9 +143,10 @@ const config = defineAccess({
 import { AccessProvider } from 'react-access-engine';
 
 function App() {
+  const user = useCurrentUser(); // your auth hook
   return (
-    <AccessProvider config={config} user={{ id: 'user-123', roles: ['editor'], plan: 'pro' }}>
-      <Dashboard />
+    <AccessProvider config={config} user={{ id: user.id, roles: user.roles, plan: user.plan }}>
+      <Store />
     </AccessProvider>
   );
 }
@@ -105,15 +159,15 @@ function App() {
 ```tsx
 import { useAccess } from 'react-access-engine';
 
-function Dashboard() {
+function StorePage() {
   const { can, is, has, tier } = useAccess();
 
   return (
     <div>
-      {can('articles:write') && <button>New Article</button>}
-      {is('admin') && <AdminPanel />}
-      {has('dark-mode') && <DarkModeToggle />}
-      {tier('pro') && <ProFeatures />}
+      {can('cart:manage') && <button>🛒 Add to Cart</button>}
+      {is('seller') && <SellerDashboard />}
+      {has('quick-buy') && <button>⚡ Buy Now</button>}
+      {tier('premium') && <AIRecommendations />}
     </div>
   );
 }
@@ -124,28 +178,28 @@ function Dashboard() {
 ```tsx
 import { Allow } from 'react-access-engine';
 
-function Dashboard() {
+function StorePage() {
   return (
     <div>
-      <Allow permission="articles:write">
-        <button>New Article</button>
+      <Allow permission="cart:manage">
+        <button>🛒 Add to Cart</button>
       </Allow>
 
-      <Allow role="admin">
-        <AdminPanel />
+      <Allow role="seller">
+        <SellerDashboard />
       </Allow>
 
-      <Allow feature="dark-mode">
-        <DarkModeToggle />
+      <Allow feature="ai-recommendations" fallback={<UpgradePrompt plan="premium" />}>
+        <AIRecommendations />
       </Allow>
 
-      <Allow plan="pro" fallback={<UpgradePrompt />}>
-        <ProFeatures />
+      <Allow plan="plus" fallback={<UpgradePrompt />}>
+        <LiveChat />
       </Allow>
 
       {/* Combine conditions — all must pass */}
-      <Allow permission="analytics:view" feature="analytics-v2" plan="pro">
-        <AnalyticsDashboard />
+      <Allow permission="analytics:own-store" role="seller" plan="plus">
+        <StoreAnalytics />
       </Allow>
     </div>
   );
@@ -198,8 +252,8 @@ For specific use cases, these focused components are also available:
 Permission gate with roles, policy, and multi-permission support.
 
 ```tsx
-<Can perform="articles:edit" on={{ ownerId: article.ownerId }} fallback={<ReadOnly />}>
-  <Editor />
+<Can perform="products:edit" on={{ sellerId: product.sellerId }} fallback={<ReadOnly />}>
+  <ProductEditor />
 </Can>
 ```
 
@@ -208,8 +262,8 @@ Permission gate with roles, policy, and multi-permission support.
 Feature flag gate.
 
 ```tsx
-<Feature name="new-editor" fallback={<LegacyEditor />}>
-  <NewEditor />
+<Feature name="live-chat" fallback={<EmailSupport />}>
+  <LiveChat />
 </Feature>
 ```
 
@@ -259,34 +313,52 @@ When you need more detail than `useAccess()` provides:
 
 ### Policy Engine (ABAC)
 
-Define composable allow/deny rules:
+Define composable allow/deny rules for fine-grained access control:
 
 ```typescript
 const config = defineAccess({
-  roles: ['admin', 'editor', 'viewer'] as const,
+  roles: ['customer', 'seller', 'admin', 'support'],
   permissions: {
-    admin: ['*'] as const,
-    editor: ['articles:read', 'articles:write'] as const,
-    viewer: ['articles:read'] as const,
+    customer: ['products:browse', 'cart:manage', 'orders:own', 'reviews:write'],
+    seller: ['products:browse', 'products:create', 'inventory:manage'],
+    admin: ['*'],
+    support: ['orders:view-all', 'orders:refund', 'reviews:moderate'],
   },
   policies: [
     {
-      id: 'owner-can-edit',
+      id: 'seller-own-products',
       effect: 'allow',
-      permissions: ['articles:edit'],
-      condition: ({ user, resource }) => user.id === resource.ownerId,
-      description: 'Users can edit their own articles',
+      permissions: ['products:edit', 'products:delete'],
+      condition: ({ user, resource }) => user.id === resource.sellerId,
+      description: 'Sellers can only edit/delete their own products',
     },
     {
-      id: 'deny-in-production',
+      id: 'refund-time-limit',
       effect: 'deny',
-      permissions: ['debug:*'],
-      environments: ['production'],
+      permissions: ['orders:refund'],
+      condition: ({ resource }) => {
+        const daysSinceOrder = (Date.now() - resource.orderedAt) / 86400000;
+        return daysSinceOrder > 30;
+      },
       priority: 100,
-      description: 'Disable debug in production',
+      description: 'Block refunds after 30 days',
     },
   ],
 });
+```
+
+Use policies in components with the `on` prop:
+
+```tsx
+// Seller can only edit their own products
+<Can perform="products:edit" on={{ sellerId: product.sellerId }}>
+  <button>Edit Product</button>
+</Can>
+
+// Support can only refund recent orders
+<Can perform="orders:refund" on={{ orderedAt: order.createdAt }}>
+  <button>Process Refund</button>
+</Can>
 ```
 
 ### Percentage Rollouts
@@ -335,25 +407,45 @@ if (hasPlanAccess('pro')) {
 
 ### Plugin System
 
+Hook into every access decision for logging, analytics, or custom behavior:
+
 ```typescript
-const auditPlugin: AccessPlugin = {
-  name: 'audit-logger',
+import { createAuditLoggerPlugin, createAnalyticsPlugin } from 'react-access-engine';
+
+// Built-in plugins — drop-in audit logging and analytics
+const auditPlugin = createAuditLoggerPlugin({
+  logger: (entry) => fetch('/api/audit', { method: 'POST', body: JSON.stringify(entry) }),
+});
+
+// Custom plugin — e-commerce analytics
+const storePlugin = {
+  name: 'store-analytics',
   onAccessCheck: (event) => {
-    console.log(`[AUDIT] ${event.permission}: ${event.granted ? 'GRANTED' : 'DENIED'}`);
+    // Track when customers are blocked from actions (e.g. upgrade prompt triggers)
+    if (!event.granted) {
+      analytics.track('access_denied', { permission: event.permission, userId: event.userId });
+    }
   },
   onFeatureEvaluate: (event) => {
-    analytics.track('feature_check', {
-      feature: event.feature,
-      enabled: event.enabled,
+    // Track feature flag exposure for product analytics
+    analytics.track('feature_exposure', { feature: event.feature, enabled: event.enabled });
+  },
+  onExperimentAssign: (event) => {
+    // Track A/B test variant assignments
+    analytics.track('experiment_assigned', {
+      experiment: event.experimentId,
+      variant: event.variant,
     });
   },
 };
 
 const config = defineAccess({
-  // ...
-  plugins: [auditPlugin],
+  // ...roles, permissions, features, experiments, policies...
+  plugins: [auditPlugin, storePlugin],
 });
 ```
+
+Plugins fire on every `can()`, `has()`, and `useExperiment()` call — zero component changes needed.
 
 ### Experiments / A/B Testing
 
@@ -389,33 +481,48 @@ console.log(debugInfo.lastChecks); // Recent permission checks
 console.log(debugInfo.lastFeatureEvals); // Recent feature evaluations
 ```
 
-## Real-World Examples
+## Full E-commerce Example
 
-### E-commerce Store
+A complete e-commerce store using **every feature** — RBAC, ABAC policies, feature flags, A/B experiments, plan gating, plugins, and devtools.
 
-A complete e-commerce example — roles, plans, feature flags, and A/B tests in one config:
+### Config — One Source of Truth
 
 ```typescript
-import { defineAccess, AccessProvider, Allow, useAccess } from 'react-access-engine';
+import { defineAccess } from 'react-access-engine';
 
-// 1. One config for your entire store
-const config = defineAccess({
+const storeConfig = defineAccess({
+  // ── Roles & Permissions ──────────────────────────────────────────────
   roles: ['customer', 'seller', 'admin', 'support'],
   permissions: {
     customer: ['products:browse', 'cart:manage', 'orders:own', 'reviews:write', 'wishlist:manage'],
-    seller:   ['products:browse', 'products:create', 'inventory:manage', 'analytics:own-store'],
-    admin:    ['*'],
-    support:  ['orders:view-all', 'orders:refund', 'reviews:moderate', 'tickets:manage'],
+    seller: [
+      'products:browse',
+      'products:create',
+      'products:edit-own',
+      'inventory:manage',
+      'analytics:own-store',
+      'orders:seller-view',
+      'coupons:create',
+    ],
+    admin: ['*'],
+    support: ['orders:view-all', 'orders:refund', 'reviews:moderate', 'tickets:manage'],
   },
+
+  // ── Plans ────────────────────────────────────────────────────────────
   plans: ['free', 'plus', 'premium'],
+
+  // ── Feature Flags ───────────────────────────────────────────────────
   features: {
-    'quick-buy':          true,                                           // Buy-now button
-    'wishlist':           true,                                           // Wishlist
-    'ai-recommendations': { enabled: true, allowedPlans: ['premium'] },   // Premium-only AI
-    'live-chat':          { enabled: true, allowedPlans: ['plus', 'premium'] },
-    'loyalty-points':     { enabled: true, allowedPlans: ['plus', 'premium'] },
-    'bulk-discount':      { enabled: true, allowedRoles: ['seller'] },    // Seller-only
+    'quick-buy': true, // Simple toggle
+    wishlist: true,
+    'reviews-v2': { rolloutPercentage: 50 }, // 50% rollout
+    'ai-recommendations': { enabled: true, allowedPlans: ['premium'] }, // Plan-gated
+    'live-chat': { enabled: true, allowedPlans: ['plus', 'premium'] },
+    'loyalty-points': { enabled: true, allowedPlans: ['plus', 'premium'] },
+    'bulk-discount': { enabled: true, allowedRoles: ['seller'] }, // Role-gated
   },
+
+  // ── A/B Experiments ─────────────────────────────────────────────────
   experiments: {
     'checkout-layout': {
       id: 'checkout-layout',
@@ -424,22 +531,82 @@ const config = defineAccess({
       active: true,
       allocation: { classic: 34, 'one-page': 33, 'step-wizard': 33 },
     },
+    'promo-banner': {
+      id: 'promo-banner',
+      variants: ['seasonal', 'loyalty', 'referral'],
+      defaultVariant: 'seasonal',
+      active: true,
+      allocation: { seasonal: 34, loyalty: 33, referral: 33 },
+    },
   },
-});
 
-// 2. Wrap your app
-function App() {
-  const user = useCurrentUser(); // your auth hook
-  return (
-    <AccessProvider config={config} user={{ id: user.id, roles: user.roles, plan: user.plan }}>
-      <Store />
-    </AccessProvider>
-  );
-}
+  // ── ABAC Policies ───────────────────────────────────────────────────
+  policies: [
+    {
+      id: 'seller-own-products',
+      effect: 'allow',
+      permissions: ['products:edit', 'products:delete'],
+      condition: ({ user, resource }) => user.id === resource.sellerId,
+      description: 'Sellers can only edit/delete their own products',
+    },
+    {
+      id: 'refund-time-limit',
+      effect: 'deny',
+      permissions: ['orders:refund'],
+      condition: ({ resource }) => {
+        const daysSinceOrder = (Date.now() - resource.orderedAt) / 86400000;
+        return daysSinceOrder > 30;
+      },
+      priority: 100,
+      description: 'Block refunds after 30 days',
+    },
+    {
+      id: 'premium-bulk-orders',
+      effect: 'allow',
+      permissions: ['orders:bulk-create'],
+      condition: ({ user }) => user.plan === 'premium',
+      description: 'Only premium users can place bulk orders',
+    },
+  ],
+
+  // ── Plugins ─────────────────────────────────────────────────────────
+  plugins: [
+    {
+      name: 'store-audit',
+      onAccessCheck: (event) => {
+        // Log every access decision for compliance
+        console.log(`[AUDIT] ${event.permission}: ${event.granted ? '✅' : '❌'}`);
+      },
+      onFeatureEvaluate: (event) => {
+        // Track feature flag exposure
+        analytics.track('feature_exposure', { feature: event.feature, enabled: event.enabled });
+      },
+      onExperimentAssign: (event) => {
+        // Track A/B test assignments
+        analytics.track('experiment_assigned', { id: event.experimentId, variant: event.variant });
+      },
+    },
+  ],
+
+  debug: true, // Enable DevTools overlay
+});
 ```
 
+### Components — Protect Everything
+
 ```tsx
-// 3. Protect anything — products, checkout, dashboards
+import {
+  AccessProvider,
+  Allow,
+  Can,
+  Feature,
+  Experiment,
+  useAccess,
+  useExperiment,
+} from 'react-access-engine';
+import { AccessDevtools } from '@react-access-engine/devtools';
+
+// ── Product Card ───────────────────────────────────────────────────────
 function ProductCard({ product }) {
   const { can, has } = useAccess();
 
@@ -448,13 +615,10 @@ function ProductCard({ product }) {
       <h3>
         {product.name} — ${product.price}
       </h3>
-
       <Allow permission="cart:manage">
         <button>🛒 Add to Cart</button>
       </Allow>
-
       {has('quick-buy') && can('cart:manage') && <button>⚡ Buy Now</button>}
-
       <Allow feature="wishlist">
         <button>❤️ Wishlist</button>
       </Allow>
@@ -462,128 +626,124 @@ function ProductCard({ product }) {
   );
 }
 
-// Premium-only AI recommendations with upgrade prompt
+// ── ABAC: Seller can only edit own products ────────────────────────────
+function ProductActions({ product }) {
+  return (
+    <Can perform="products:edit" on={{ sellerId: product.sellerId }}>
+      <button>✏️ Edit</button>
+    </Can>
+  );
+}
+
+// ── ABAC: Refund blocked after 30 days ─────────────────────────────────
+function RefundButton({ order }) {
+  return (
+    <Can
+      perform="orders:refund"
+      on={{ orderedAt: order.createdAt }}
+      fallback={<span>Refund window expired</span>}
+    >
+      <button>💸 Process Refund</button>
+    </Can>
+  );
+}
+
+// ── Plan-gated feature with upgrade prompt ─────────────────────────────
 function AIRecommendations() {
   return (
     <Allow feature="ai-recommendations" fallback={<UpgradePrompt plan="premium" />}>
-      <div>🤖 AI Picks: Wireless Earbuds, Phone Case, USB-C Cable</div>
+      <div>🤖 AI Picks: Earbuds, Phone Case, USB-C Cable</div>
     </Allow>
   );
 }
 
-// Seller-only dashboard — hidden for customers
+// ── A/B Test: Declarative variant rendering ────────────────────────────
+function PromoBanner() {
+  return (
+    <Experiment
+      id="promo-banner"
+      variants={{
+        seasonal: <div>🎄 Winter Sale — 50% off!</div>,
+        loyalty: <div>⭐ Double Points Week!</div>,
+        referral: <div>👥 Refer & Save — Give $10, Get $10</div>,
+      }}
+      fallback={<div>Loading promotion...</div>}
+    />
+  );
+}
+
+// ── A/B Test: Hook-based variant ───────────────────────────────────────
+function CheckoutSection() {
+  const { variant } = useExperiment('checkout-layout');
+  return (
+    <div>
+      {variant === 'classic' && <ClassicCheckout />}
+      {variant === 'one-page' && <OnePageCheckout />}
+      {variant === 'step-wizard' && <WizardCheckout />}
+    </div>
+  );
+}
+
+// ── Seller Dashboard ───────────────────────────────────────────────────
 function SellerDashboard() {
   return (
     <Allow role="seller">
-      <div>
-        <h3>📦 Seller Dashboard</h3>
-        <Allow permission="inventory:manage">
-          <p>✅ Manage inventory</p>
-        </Allow>
-        <Allow permission="analytics:own-store">
-          <p>✅ Store analytics</p>
-        </Allow>
-        <Allow feature="bulk-discount">
-          <p>✅ Bulk discount pricing</p>
-        </Allow>
-      </div>
+      <h3>📦 Seller Dashboard</h3>
+      <Can perform="inventory:manage">
+        <p>Inventory Manager</p>
+      </Can>
+      <Can perform="analytics:own-store">
+        <p>Store Analytics</p>
+      </Can>
+      <Can perform="coupons:create">
+        <p>Create Coupons</p>
+      </Can>
+      <Feature name="bulk-discount">
+        <p>Bulk Discount Pricing</p>
+      </Feature>
     </Allow>
   );
 }
 
-// Support tools — only visible to support agents
+// ── Support Tools ──────────────────────────────────────────────────────
 function SupportTools() {
   return (
     <Allow role="support">
-      <div>
-        <Allow permission="orders:refund">
-          <button>Process Refund</button>
-        </Allow>
-        <Allow permission="reviews:moderate">
-          <button>Moderate Reviews</button>
-        </Allow>
-      </div>
+      <Can perform="orders:view-all">
+        <p>View All Orders</p>
+      </Can>
+      <Can perform="orders:refund">
+        <button>Process Refund</button>
+      </Can>
+      <Can perform="reviews:moderate">
+        <button>Moderate Reviews</button>
+      </Can>
+      <Can perform="tickets:manage">
+        <button>Manage Tickets</button>
+      </Can>
     </Allow>
   );
 }
-```
 
-> 📂 Full runnable example: [`examples/ecommerce`](examples/ecommerce) — switch between Customer, Seller, Admin, and Support users to see everything change in real time.
-
-### SaaS Dashboard
-
-```tsx
-function SaasDashboard() {
-  const { can, tier } = useAccess();
-
+// ── App — Everything together ──────────────────────────────────────────
+function App() {
+  const user = useCurrentUser();
   return (
-    <AccessProvider config={saasConfig} user={currentUser}>
-      <Sidebar>
-        <Allow permission="dashboard:view">
-          <NavLink to="/dashboard">Dashboard</NavLink>
-        </Allow>
-        <Allow permission="analytics:view" feature="analytics-v2">
-          <NavLink to="/analytics">Analytics</NavLink>
-        </Allow>
-        <Allow permission="billing:manage">
-          <NavLink to="/billing">Billing</NavLink>
-        </Allow>
-      </Sidebar>
-
-      <Allow permission="settings:manage" plan="pro" fallback={<UpgradePrompt />}>
-        <AdvancedSettings />
-      </Allow>
+    <AccessProvider config={storeConfig} user={{ id: user.id, roles: user.roles, plan: user.plan }}>
+      <ProductCard product={product} />
+      <ProductActions product={product} />
+      <AIRecommendations />
+      <PromoBanner />
+      <CheckoutSection />
+      <SellerDashboard />
+      <SupportTools />
+      <AccessDevtools position="bottom-right" />
     </AccessProvider>
   );
 }
 ```
 
-### Admin Panel
-
-```tsx
-const adminConfig = defineAccess({
-  roles: ['super-admin', 'admin', 'moderator', 'support'],
-  permissions: {
-    'super-admin': ['*'],
-    admin: ['users:*', 'content:*', 'settings:read'],
-    moderator: ['content:read', 'content:moderate', 'reports:read'],
-    support: ['users:read', 'tickets:*'],
-  },
-});
-
-function AdminPanel() {
-  const { can } = useAccess();
-
-  return (
-    <Allow permission="users:read" fallback={<div>No admin access</div>}>
-      <UserTable />
-      {can('users:delete') && <BulkDeleteButton />}
-    </Allow>
-  );
-}
-```
-
-### Subscription-Gated App
-
-```tsx
-const config = defineAccess({
-  roles: ['user'],
-  permissions: { user: ['app:access'] },
-  plans: ['free', 'pro', 'enterprise'],
-  features: {
-    'export-csv': { enabled: true, allowedPlans: ['pro', 'enterprise'] },
-    'api-access': { enabled: true, allowedPlans: ['enterprise'] },
-  },
-});
-
-function ExportButton() {
-  return (
-    <Allow feature="export-csv" fallback={<UpgradeBanner plan="pro" />}>
-      <button>Export CSV</button>
-    </Allow>
-  );
-}
-```
+> 📂 Full runnable example: [`examples/ecommerce`](examples/ecommerce) — switch between Customer, Seller, Admin, and Support users to see everything change in real time.
 
 ## SSR / Next.js
 
@@ -614,15 +774,16 @@ export default function RootLayout({ children }) {
 
 ```typescript
 const config = defineAccess({
-  roles: ['admin', 'editor'] as const,
+  roles: ['customer', 'seller', 'admin'] as const,
   permissions: {
-    admin: ['users:manage', 'billing:read'] as const,
-    editor: ['articles:write'] as const,
+    customer: ['products:browse', 'cart:manage'] as const,
+    seller: ['products:create', 'inventory:manage'] as const,
+    admin: ['*'] as const,
   },
 });
 
-// InferRoles<typeof config> = 'admin' | 'editor'
-// InferPermissions<typeof config> = 'users:manage' | 'billing:read' | 'articles:write'
+// InferRoles<typeof config> = 'customer' | 'seller' | 'admin'
+// InferPermissions<typeof config> = 'products:browse' | 'cart:manage' | 'products:create' | 'inventory:manage' | '*'
 ```
 
 Without `as const`, everything still works — you just get `string` instead of literal union types.

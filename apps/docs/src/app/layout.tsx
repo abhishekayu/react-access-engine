@@ -39,7 +39,7 @@ const jsonLd = {
     'Unified RBAC, ABAC, feature flags, A/B experiments, plan gating, and remote config for React.',
   programmingLanguage: 'TypeScript',
   runtimePlatform: 'React',
-  codeRepository: 'https://github.com/example/react-access-engine',
+  codeRepository: 'https://github.com/abhishekayu/react-access-engine',
   license: 'https://opensource.org/licenses/MIT',
   operatingSystem: 'Cross-platform',
   applicationCategory: 'DeveloperApplication',

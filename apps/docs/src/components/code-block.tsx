@@ -36,7 +36,7 @@ export function CodeBlock({ code, language = 'tsx', filename, showLineNumbers }:
   };
 
   return (
-    <div className="group relative mb-4 rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="group relative mb-4 rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
       {filename && (
         <div className="flex items-center border-b border-zinc-200 px-4 py-2 dark:border-zinc-700">
           <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{filename}</span>
@@ -57,7 +57,7 @@ export function CodeBlock({ code, language = 'tsx', filename, showLineNumbers }:
         </button>
         {html ? (
           <div
-            className={cn('[&_.shiki]:!bg-transparent', showLineNumbers && '[&_.shiki]:pl-12')}
+            className={cn(showLineNumbers && '[&_.shiki]:pl-12')}
             dangerouslySetInnerHTML={{ __html: html }}
           />
         ) : (
