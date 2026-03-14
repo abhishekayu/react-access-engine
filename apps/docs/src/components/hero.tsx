@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight, Github } from 'lucide-react';
-import { Shield } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from './ui/button';
 import { FadeIn } from './fade-in';
 import { useEffect, useState } from 'react';
@@ -92,9 +92,20 @@ export function Hero() {
       </div>
 
       {/* Centered hero text */}
-      <div className="relative mx-auto max-w-4xl px-4 pt-24 sm:px-6 sm:pt-32 lg:pt-40 text-center">
+      <div className="relative mx-auto max-w-4xl px-4 pt-24 sm:px-6  text-center">
+        <FadeIn delay={0.02}>
+          <Image
+            src="/logo.png"
+            alt="react-access-engine logo"
+            width={260}
+            height={142}
+            className="mx-auto h-auto w-52 sm:w-64 drop-shadow-lg"
+            priority
+          />
+        </FadeIn>
+
         <FadeIn delay={0.05}>
-          <h1 className="mt-7 text-[2.5rem] font-extrabold tracking-tight text-zinc-900 sm:text-[3.25rem] lg:text-[4rem] dark:text-white leading-[1.05]">
+          <h1 className="mt-5 text-[2.5rem] font-extrabold tracking-tight text-zinc-900 sm:text-[3.25rem] lg:text-[4rem] dark:text-white leading-[1.05]">
             Unified access
             <br />
             control{' '}

@@ -29,6 +29,10 @@ export const metadata: Metadata = {
     description: 'Unified access control for React apps.',
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: '/icon.png',
+    apple: '/icon.png',
+  },
 };
 
 const jsonLd = {

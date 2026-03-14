@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Github, Shield } from 'lucide-react';
+import { Menu, X, Github } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { topNavLinks } from '@/lib/navigation';
@@ -22,7 +23,7 @@ export function Nav() {
           href="/"
           className="flex items-center gap-2 text-[15px] font-semibold text-zinc-900 dark:text-white"
         >
-          <Shield className="h-5 w-5 text-blue-600" />
+          <Image src="/logo.png" alt="react-access-engine" width={40} height={22} className="h-6 w-auto" />
           <span className="hidden sm:inline">react-access-engine</span>
           <span className="sm:hidden">RAE</span>
         </Link>
