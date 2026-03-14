@@ -995,4 +995,4 @@ If react-access-engine saves you time, consider [sponsoring the project](https:/
 
 ## License
 
-[MIT](LICENSE) © [Abhishek](https://github.com/abhishekayu)
+[MIT](LICENSE) © [Abhishek Verma](https://github.com/abhishekayu)

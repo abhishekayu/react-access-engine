@@ -1,10 +1,14 @@
 {
   "name": "react-access-engine-devtools",
   "version": "0.1.2",
-  "description": "Development-only devtools overlay for react-access-engine — visualize access decisions, feature flags, policies, and experiments in real time",
-  "author": "Abhishek",
+  "description": "DevTools overlay for react-access-engine — inspect RBAC, ABAC, feature flags, A/B experiments, policies, and access decisions in real time. Zero-config debug panel for React.",
+  "author": "Abhishek Verma",
   "license": "MIT",
-  "homepage": "https://github.com/abhishekayu/react-access-engine#readme",
+  "homepage": "https://react-access-engine.dev",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/abhishekayu"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/abhishekayu/react-access-engine.git",
@@ -16,12 +20,24 @@
   "keywords": [
     "react",
     "devtools",
-    "access-control",
-    "rbac",
-    "feature-flags",
+    "developer-tools",
     "debug",
     "react-access-engine",
-    "developer-tools"
+    "access-control",
+    "rbac",
+    "abac",
+    "authorization",
+    "permissions",
+    "feature-flags",
+    "feature-toggles",
+    "a/b-testing",
+    "ab-testing",
+    "experiments",
+    "policy-engine",
+    "react-devtools",
+    "debug-overlay",
+    "inspector",
+    "typescript"
   ],
   "type": "module",
   "main": "./dist/index.cjs",
