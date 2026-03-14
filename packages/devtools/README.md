@@ -132,24 +132,24 @@ isDebugEnabled(); // check status
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────┐
+┌──────────────────────────────────────────────┐
 │  Your App                                    │
 │  ┌────────────────────────────────────────┐  │
-│  │  <AccessProvider config={...} user={…}> │  │
+│  │ <AccessProvider config={...} user={…}> │  │
 │  │    ┌──────────────┐                    │  │
-│  │    │  DebugEngine  │◄─── records events │  │
-│  │    │  PluginEngine │                    │  │
+│  │    │  DebugEngine │◄─── records events │  │
+│  │    │  PluginEngine│                    │  │
 │  │    └──────┬───────┘                    │  │
 │  │           │ subscribe()                │  │
 │  │    ┌──────▼───────────────────┐        │  │
-│  │    │  <AccessDevtools />       │        │  │
-│  │    │  ├─ useDevtoolsContext()  │        │  │
-│  │    │  ├─ useDebugLog()         │        │  │
-│  │    │  ├─ useDevtoolsSnapshot() │        │  │
-│  │    │  └─ Panel UI              │        │  │
+│  │    │  <AccessDevtools />      │        │  │
+│  │    │  ├─ useDevtoolsContext() │        │  │
+│  │    │  ├─ useDebugLog()        │        │  │
+│  │    │  ├─ useDevtoolsSnapshot()│        │  │
+│  │    │  └─ Panel UI             │        │  │
 │  │    └──────────────────────────┘        │  │
 │  └────────────────────────────────────────┘  │
-└─────────────────────────────────────────────┘
+└──────────────────────────────────────────────┘
 ```
 
 ## Development
