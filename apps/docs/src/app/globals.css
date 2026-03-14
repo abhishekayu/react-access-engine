@@ -46,11 +46,11 @@ html.dark {
 
 /* Shiki code block styling */
 .shiki {
-  padding: 1rem 1.25rem;
+  padding: 0.875rem 1rem;
   border-radius: 0.5rem;
   overflow-x: auto;
-  font-size: 0.875rem;
-  line-height: 1.7;
+  font-size: 0.8125rem;
+  line-height: 1.6;
   background: transparent !important;
 }
 
@@ -61,6 +61,20 @@ html.dark {
   color: inherit;
 }
 
+/* Hero code block — polished for center layout */
+.hero-code .shiki {
+  padding: 1rem 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+}
+
+@media (min-width: 1024px) {
+  .hero-code .shiki {
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+}
+
 /* Shiki dual-theme: class-based dark mode switching */
 html.dark .shiki,
 html.dark .shiki span {
@@ -69,14 +83,6 @@ html.dark .shiki span {
   font-style: var(--shiki-dark-font-style) !important;
   font-weight: var(--shiki-dark-font-weight) !important;
   text-decoration: var(--shiki-dark-text-decoration) !important;
-}
-
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* Grid pattern */
@@ -95,74 +101,102 @@ html.dark .shiki span {
 
 /* 3D perspective grid */
 .hero-3d-wrapper {
-  perspective: 800px;
-  perspective-origin: 50% 40%;
+  perspective: 600px;
+  perspective-origin: 50% 30%;
 }
 
 .hero-3d-grid {
   position: absolute;
-  inset: 0;
-  transform: rotateX(55deg) translateZ(0);
+  left: -30%;
+  right: -30%;
+  bottom: -60%;
+  height: 180%;
+  transform: rotateX(72deg) translateZ(0);
   transform-origin: 50% 100%;
   background-image:
     linear-gradient(to right, rgba(99, 102, 241, 0.12) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(99, 102, 241, 0.12) 1px, transparent 1px);
-  background-size: 4rem 4rem;
-  mask-image: linear-gradient(to top, black 5%, transparent 70%);
-  -webkit-mask-image: linear-gradient(to top, black 5%, transparent 70%);
+  background-size: 3rem 3rem;
+  animation: grid-scroll 20s linear infinite;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 100%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 100%, black 30%, transparent 75%);
 }
 
 .dark .hero-3d-grid {
   background-image:
-    linear-gradient(to right, rgba(139, 92, 246, 0.15) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(139, 92, 246, 0.15) 1px, transparent 1px);
+    linear-gradient(to right, rgba(129, 102, 246, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(129, 102, 246, 0.18) 1px, transparent 1px);
 }
 
-/* Floating orbs */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  25% { transform: translateY(-20px) translateX(10px); }
-  50% { transform: translateY(-8px) translateX(-5px); }
-  75% { transform: translateY(-25px) translateX(8px); }
-}
-
-@keyframes float-slower {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  33% { transform: translateY(-15px) translateX(-12px); }
-  66% { transform: translateY(-30px) translateX(6px); }
-}
-
-.orb-1 {
-  animation: float-slow 8s ease-in-out infinite;
-}
-.orb-2 {
-  animation: float-slower 10s ease-in-out infinite;
-}
-.orb-3 {
-  animation: float-slow 12s ease-in-out infinite reverse;
+@keyframes grid-scroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 3rem; }
 }
 
 /* Horizon glow line */
 .hero-horizon {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
+  left: 0;
+  right: 0;
+  bottom: 30%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), rgba(139, 92, 246, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3), transparent);
+  filter: blur(1px);
+  z-index: 1;
 }
 
 .dark .hero-horizon {
-  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.6), rgba(236, 72, 153, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(129, 102, 246, 0.5), rgba(167, 139, 250, 0.5), transparent);
 }
 
-/* Blinking cursor */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+/* Hero code block — 3D tilt perspective */
+.hero-code-tilt {
+  transform: perspective(1200px) rotateX(4deg) rotateY(0deg);
+  transform-origin: center center;
+  transition: transform 0.4s ease;
 }
 
-.animate-blink {
-  animation: blink 1s step-end infinite;
+.hero-code-tilt:hover {
+  transform: perspective(1200px) rotateX(1deg) rotateY(0deg) scale(1.01);
 }
+
+/* Floating animation for code block */
+.hero-code-float {
+  animation: hero-float 6s ease-in-out infinite;
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Glow behind code block */
+.hero-code-glow {
+  background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08), transparent 70%);
+}
+
+.dark .hero-code-glow {
+  background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.12), transparent 70%);
+}
+
+/* Gradient text shimmer */
+.hero-gradient-text {
+  background-size: 200% auto;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+/* Feature card glass effect */
+.feature-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 4px 12px rgba(0, 0, 0, 0.01);
+}
+
+.dark .feature-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+
