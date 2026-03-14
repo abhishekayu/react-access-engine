@@ -2,7 +2,9 @@
 
 # react-access-engine
 
-**Unified access control, feature flags, and policy engine for React.**
+**Unified access control, RBAC, ABAC, feature flags, experiments, and policy engine for React.**
+
+React, RBAC, ABAC, authorization, permissions, feature flags, A/B testing, plan gating, remote config, SSR-safe
 
 [![npm version](https://img.shields.io/npm/v/react-access-engine?color=blue&label=npm)](https://www.npmjs.com/package/react-access-engine)
 [![minzipped size](https://img.shields.io/badge/minzipped-5.7_kB-blue)](https://bundlephobia.com/package/react-access-engine)
@@ -18,7 +20,7 @@
 
 ## Why?
 
-React apps cobble together homegrown RBAC, a feature flag service, ad-hoc plan gating, and manual A/B test wiring — each with its own provider, API, and blind spots.
+React apps cobble together homegrown RBAC, a feature flag service, ad-hoc plan gating, and manual A/B test wiring each with its own provider, API, and blind spots.
 
 **react-access-engine** replaces all of them with one system:
 
