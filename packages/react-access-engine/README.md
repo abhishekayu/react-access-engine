@@ -5,7 +5,7 @@
 **Unified access control, feature flags, and policy engine for React.**
 
 [![npm version](https://img.shields.io/npm/v/react-access-engine?color=blue&label=npm)](https://www.npmjs.com/package/react-access-engine)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-access-engine?label=minzipped)](https://bundlephobia.com/package/react-access-engine)
+[![minzipped size](https://img.shields.io/badge/minzipped-5.7_kB-blue)](https://bundlephobia.com/package/react-access-engine)
 [![CI](https://github.com/abhishekayu/react-access-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/abhishekayu/react-access-engine/actions/workflows/ci.yml)
 [![codecov](https://img.shields.io/badge/tests-220%20passing-brightgreen)](https://github.com/abhishekayu/react-access-engine)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
