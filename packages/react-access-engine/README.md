@@ -219,4 +219,4 @@ import { AccessDevtools } from 'react-access-engine-devtools';
 
 ## License
 
-[MIT](https://github.com/abhishekayu/react-access-engine/blob/main/LICENSE) © [Abhishek](https://github.com/abhishekayu)
+[MIT](https://github.com/abhishekayu/react-access-engine/blob/main/LICENSE) © [Abhishek Verma](https://github.com/abhishekayu)
