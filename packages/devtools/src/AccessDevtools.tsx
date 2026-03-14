@@ -21,7 +21,7 @@ declare const process: { env: Record<string, string | undefined> } | undefined;
 // policy evaluations, experiments, and a live event log.
 //
 // Usage:
-//   import { AccessDevtools } from '@react-access-engine/devtools';
+//   import { AccessDevtools } from 'react-access-engine-devtools';
 //   <AccessProvider config={config} user={user}>
 //     <App />
 //     <AccessDevtools />

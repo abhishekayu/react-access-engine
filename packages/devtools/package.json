@@ -1,5 +1,5 @@
 {
-  "name": "@react-access-engine/devtools",
+  "name": "react-access-engine-devtools",
   "version": "0.1.0",
   "description": "Development-only devtools overlay for react-access-engine — visualize access decisions, feature flags, policies, and experiments in real time",
   "author": "Abhishek",
@@ -10,6 +10,19 @@
     "url": "https://github.com/abhishekayu/react-access-engine.git",
     "directory": "packages/devtools"
   },
+  "bugs": {
+    "url": "https://github.com/abhishekayu/react-access-engine/issues"
+  },
+  "keywords": [
+    "react",
+    "devtools",
+    "access-control",
+    "rbac",
+    "feature-flags",
+    "debug",
+    "react-access-engine",
+    "developer-tools"
+  ],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -41,7 +54,7 @@
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
-    "react-access-engine": "workspace:*"
+    "react-access-engine": ">=0.1.0"
   },
   "devDependencies": {
     "react": "^19.0.0",

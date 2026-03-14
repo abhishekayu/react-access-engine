@@ -88,6 +88,16 @@
     "policy-engine",
     "authorization",
     "hooks",
-    "typescript"
+    "typescript",
+    "role-based-access-control",
+    "attribute-based-access-control",
+    "plan-gating",
+    "remote-config",
+    "rollout",
+    "react-hooks",
+    "access-gate",
+    "permission-guard",
+    "tree-shakeable",
+    "ssr-safe"
   ]
 }

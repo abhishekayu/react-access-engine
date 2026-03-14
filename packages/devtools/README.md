@@ -1,18 +1,18 @@
-# @react-access-engine/devtools
+# react-access-engine-devtools
 
 Development-only debugging overlay for [react-access-engine](../react-access-engine). Visualize access decisions, feature flags, policies, experiments, and user state in real time.
 
 ## Installation
 
 ```bash
-pnpm add -D @react-access-engine/devtools
+pnpm add -D react-access-engine-devtools
 ```
 
 ## Quick Start
 
 ```tsx
 import { AccessProvider, defineAccess } from 'react-access-engine';
-import { AccessDevtools } from '@react-access-engine/devtools';
+import { AccessDevtools } from 'react-access-engine-devtools';
 
 const config = defineAccess({
   roles: ['admin', 'editor', 'viewer'] as const,
@@ -81,7 +81,7 @@ Every tab (except Overview) has a filter bar. Type to search by permission name,
 Use `DebugLabel` to tag sections of your component tree. This makes devtools log entries easier to trace back to specific UI areas:
 
 ```tsx
-import { DebugLabel } from '@react-access-engine/devtools';
+import { DebugLabel } from 'react-access-engine-devtools';
 
 function Sidebar() {
   return (
@@ -100,7 +100,7 @@ function Sidebar() {
 ### Programmatic Control
 
 ```tsx
-import { enableDebug, disableDebug, isDebugEnabled } from '@react-access-engine/devtools';
+import { enableDebug, disableDebug, isDebugEnabled } from 'react-access-engine-devtools';
 
 // Toggle debug collection at runtime
 disableDebug(); // pause collection
@@ -155,6 +155,6 @@ isDebugEnabled(); // check status
 ## Development
 
 ```bash
-pnpm --filter @react-access-engine/devtools build
-pnpm --filter @react-access-engine/devtools typecheck
+pnpm --filter react-access-engine-devtools build
+pnpm --filter react-access-engine-devtools typecheck
 ```

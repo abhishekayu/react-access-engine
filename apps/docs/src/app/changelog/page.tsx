@@ -52,7 +52,7 @@ export default function ChangelogPage() {
                 <li>
                   DevTools overlay package (
                   <code className="text-xs bg-zinc-100 px-1 rounded dark:bg-zinc-800">
-                    @react-access-engine/devtools
+                    react-access-engine-devtools
                   </code>
                   )
                 </li>

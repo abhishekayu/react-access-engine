@@ -606,7 +606,7 @@ import {
   useAccess,
   useExperiment,
 } from 'react-access-engine';
-import { AccessDevtools } from '@react-access-engine/devtools';
+import { AccessDevtools } from 'react-access-engine-devtools';
 
 // ── Product Card ───────────────────────────────────────────────────────
 function ProductCard({ product }) {

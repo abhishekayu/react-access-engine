@@ -48,17 +48,17 @@ pnpm test
 
 ### Common Commands
 
-| Command                                         | Description                      |
-| ----------------------------------------------- | -------------------------------- |
-| `pnpm build`                                    | Build all packages               |
-| `pnpm test`                                     | Run all tests                    |
-| `pnpm lint`                                     | Lint all packages                |
-| `pnpm typecheck`                                | Type-check all packages          |
-| `pnpm format`                                   | Format all files with Prettier   |
-| `pnpm format:check`                             | Check formatting without writing |
+| Command                                        | Description                      |
+| ---------------------------------------------- | -------------------------------- |
+| `pnpm build`                                   | Build all packages               |
+| `pnpm test`                                    | Run all tests                    |
+| `pnpm lint`                                    | Lint all packages                |
+| `pnpm typecheck`                               | Type-check all packages          |
+| `pnpm format`                                  | Format all files with Prettier   |
+| `pnpm format:check`                            | Check formatting without writing |
 | `pnpm --filter react-access-engine test:watch` | Watch tests for the core package |
-| `pnpm --filter playground dev`                  | Start the Vite playground        |
-| `pnpm --filter docs dev`                        | Start the docs dev server        |
+| `pnpm --filter playground dev`                 | Start the Vite playground        |
+| `pnpm --filter docs dev`                       | Start the docs dev server        |
 
 ### Working on a Package
 
@@ -196,7 +196,7 @@ packages/
 │   │   ├── plugins/       # Built-in plugins
 │   │   └── utils/         # Internal utilities
 │   └── tests/             # Vitest tests
-├── devtools/              # @react-access-engine/devtools
+├── devtools/              # react-access-engine-devtools
 └── shared/                # Internal shared utilities (private)
 ```
 

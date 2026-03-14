@@ -82,10 +82,10 @@
 
 ### Measured sizes (from build output)
 
-| Package                          | ESM    | CJS    | DTS |
-| -------------------------------- | ------ | ------ | --- |
-| `react-access-engine`           | ~15 KB | ~17 KB | ✅  |
-| `@react-access-engine/devtools` | ~30 KB | ~32 KB | ✅  |
+| Package                        | ESM    | CJS    | DTS |
+| ------------------------------ | ------ | ------ | --- |
+| `react-access-engine`          | ~15 KB | ~17 KB | ✅  |
+| `react-access-engine-devtools` | ~30 KB | ~32 KB | ✅  |
 
 _Sizes are uncompressed. Gzipped sizes are typically 40-60% smaller._
 
