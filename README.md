@@ -4,7 +4,9 @@
   
 # React Access Engine
 
-**Unified access control, feature flags, and policy engine for React.**
+**Unified access control, RBAC, ABAC, feature flags, experiments, and policy engine for React.**
+
+React, RBAC, ABAC, authorization, permissions, feature flags, A/B testing, plan gating, remote config, SSR-safe
 
 [![npm version](https://img.shields.io/npm/v/react-access-engine?color=blue&label=npm)](https://www.npmjs.com/package/react-access-engine)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/react-access-engine?label=minzipped)](https://bundlephobia.com/package/react-access-engine)
