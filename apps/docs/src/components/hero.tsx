@@ -19,7 +19,7 @@ const config = defineAccess({
   },
   features: {
     'dark-mode': true,
-    'ai-assist': { plans: ['pro'] },
+    'ai-assist': { allowedPlans: ['pro'] },
   },
 })
 

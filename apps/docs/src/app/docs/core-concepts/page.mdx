@@ -82,9 +82,9 @@ Permissions are resolved in this order:
 Features are evaluated with this precedence:
 
 1. **Static** — `enabled: true/false`
-2. **Environment** — `environments: ['production']`
-3. **Role** — `roles: ['admin', 'beta-tester']`
-4. **Plan** — `plans: ['pro', 'enterprise']`
+2. **Environment** — `allowedEnvironments: ['production']`
+3. **Role** — `allowedRoles: ['admin', 'beta-tester']`
+4. **Plan** — `allowedPlans: ['pro', 'enterprise']`
 5. **Dependencies** — `dependencies: ['otherFeature']` (topologically resolved)
 6. **Rollout** — `rolloutPercentage: 25` (deterministic hash, SSR-safe)
 

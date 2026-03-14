@@ -22,14 +22,14 @@ const config = defineAccess({
   },
   policies: [
     {
-      name: 'owner-can-edit',
+      id: 'owner-can-edit',
       effect: 'allow',
       permissions: ['documents:write'],
       condition: (ctx) => ctx.resource?.ownerId === ctx.user.id,
       priority: 10,
     },
     {
-      name: 'block-outside-hours',
+      id: 'block-outside-hours',
       effect: 'deny',
       permissions: ['documents:write'],
       environments: ['production'],
@@ -40,7 +40,7 @@ const config = defineAccess({
       priority: 20,
     },
     {
-      name: 'enterprise-only-export',
+      id: 'enterprise-only-export',
       effect: 'allow',
       permissions: ['documents:export'],
       plans: ['enterprise'],
@@ -54,7 +54,7 @@ const config = defineAccess({
 
 | Field          | Type                | Description                              |
 | -------------- | ------------------- | ---------------------------------------- |
-| `name`         | `string`            | Unique rule identifier                   |
+| `id`           | `string`            | Unique rule identifier                   |
 | `effect`       | `'allow' \| 'deny'` | Whether the rule grants or denies access |
 | `permissions`  | `string[]`          | Which permissions this rule applies to   |
 | `roles`        | `string[]`          | Limit to specific roles                  |

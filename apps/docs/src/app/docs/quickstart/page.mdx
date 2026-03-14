@@ -26,7 +26,7 @@ export const accessConfig = defineAccess({
 
   features: {
     darkMode: { enabled: true },
-    betaEditor: { enabled: true, roles: ['admin', 'editor'] },
+    betaEditor: { enabled: true, allowedRoles: ['admin', 'editor'] },
     newDashboard: { rolloutPercentage: 50 },
   },
 
@@ -119,13 +119,13 @@ function PostActions() {
 Drop in the devtools overlay for debugging during development:
 
 ```tsx
-import { AccessDevTools } from '@react-access-engine/devtools';
+import { AccessDevtools } from '@react-access-engine/devtools';
 
 function App() {
   return (
     <AccessProvider config={accessConfig} user={currentUser}>
       <Dashboard />
-      {process.env.NODE_ENV === 'development' && <AccessDevTools />}
+      {process.env.NODE_ENV === 'development' && <AccessDevtools />}
     </AccessProvider>
   );
 }

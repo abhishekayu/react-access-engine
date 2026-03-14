@@ -20,8 +20,8 @@ const config = defineAccess({
     viewer: ['projects:read'],
   },
   features: {
-    aiAssistant: { enabled: true, plans: ['pro', 'enterprise'] },
-    customReports: { enabled: true, plans: ['enterprise'] },
+    aiAssistant: { enabled: true, allowedPlans: ['pro', 'enterprise'] },
+    customReports: { enabled: true, allowedPlans: ['enterprise'] },
     darkMode: { enabled: true },
   },
   plans: ['free', 'pro', 'enterprise'] as const,
@@ -61,14 +61,14 @@ const config = defineAccess({
   },
   policies: [
     {
-      name: 'same-org-only',
+      id: 'same-org-only',
       effect: 'allow',
       permissions: ['projects:read', 'projects:write'],
       condition: (ctx) => ctx.user.attributes?.orgId === ctx.resource?.orgId,
       priority: 10,
     },
     {
-      name: 'owner-full-access',
+      id: 'owner-full-access',
       effect: 'allow',
       permissions: ['projects:delete', 'projects:transfer'],
       condition: (ctx) => ctx.resource?.ownerId === ctx.user.id,

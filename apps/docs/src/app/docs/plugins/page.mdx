@@ -93,7 +93,7 @@ Then use them in conditions:
 ```tsx
 policies: [
   {
-    name: 'geo-restricted',
+    id: 'geo-restricted',
     effect: 'deny',
     permissions: ['data:export'],
     condition: (ctx) => {
@@ -153,21 +153,6 @@ const config = defineAccess({
 });
 ```
 
-## Plugin Engine (Advanced)
+## Plugin Engine (Internal)
 
-For direct engine usage:
-
-```tsx
-import { PluginEngine } from 'react-access-engine';
-
-const engine = new PluginEngine();
-engine.register(myPlugin);
-engine.registerAll([auditPlugin, analyticsPlugin]);
-
-// Emit events manually
-engine.emitAccessCheck({ permission: 'write', user, allowed: true });
-engine.emitFeatureEvaluate({ feature: 'darkMode', enabled: true, reason: 'static', user });
-
-// Collect custom operators from all plugins
-const operators = engine.collectOperators(); // ReadonlyMap<string, CustomOperator>
-```
+The `PluginEngine` class is used internally by the library to manage plugin lifecycle. It is **not exported** as part of the public API — plugins are automatically initialized when passed via the `plugins` array in `defineAccess()`.

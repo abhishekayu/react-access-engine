@@ -24,19 +24,19 @@ const config = defineAccess({
     // Role-targeted
     betaEditor: {
       enabled: true,
-      roles: ['admin', 'editor'],
+      allowedRoles: ['admin', 'editor'],
     },
 
     // Plan-gated
     advancedAnalytics: {
       enabled: true,
-      plans: ['pro', 'enterprise'],
+      allowedPlans: ['pro', 'enterprise'],
     },
 
     // Environment-scoped
     debugPanel: {
       enabled: true,
-      environments: ['development', 'staging'],
+      allowedEnvironments: ['development', 'staging'],
     },
 
     // Percentage rollout (deterministic, SSR-safe)
@@ -61,14 +61,14 @@ const config = defineAccess({
 
 ## Feature Definition Options
 
-| Field               | Type             | Description                                 |
-| ------------------- | ---------------- | ------------------------------------------- |
-| `enabled`           | `boolean`        | Base enabled state                          |
-| `roles`             | `string[]`       | Enable only for these roles                 |
-| `plans`             | `string[]`       | Enable only for these plans                 |
-| `environments`      | `string[]`       | Enable only in these environments           |
-| `rolloutPercentage` | `number` (0–100) | Percentage-based rollout                    |
-| `dependencies`      | `string[]`       | Required features that must also be enabled |
+| Field                 | Type             | Description                                 |
+| --------------------- | ---------------- | ------------------------------------------- |
+| `enabled`             | `boolean`        | Base enabled state                          |
+| `allowedRoles`        | `string[]`       | Enable only for these roles                 |
+| `allowedPlans`        | `string[]`       | Enable only for these plans                 |
+| `allowedEnvironments` | `string[]`       | Enable only in these environments           |
+| `rolloutPercentage`   | `number` (0–100) | Percentage-based rollout                    |
+| `dependencies`        | `string[]`       | Required features that must also be enabled |
 
 You can also use a simple `boolean` instead of a full definition object.
 

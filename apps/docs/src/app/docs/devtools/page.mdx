@@ -20,13 +20,13 @@ Add the DevTools component inside your `<AccessProvider>`:
 
 ```tsx
 import { AccessProvider } from 'react-access-engine';
-import { AccessDevTools } from '@react-access-engine/devtools';
+import { AccessDevtools } from '@react-access-engine/devtools';
 
 function App() {
   return (
     <AccessProvider config={config} user={user}>
       <YourApp />
-      {process.env.NODE_ENV === 'development' && <AccessDevTools />}
+      {process.env.NODE_ENV === 'development' && <AccessDevtools />}
     </AccessProvider>
   );
 }
@@ -145,6 +145,6 @@ The debug engine keeps a maximum of **100 entries per type** (FIFO), so it won't
 
 ## Production Considerations
 
-- Only include `<AccessDevTools>` in **development builds**
+- Only include `<AccessDevtools>` in **development builds**
 - The DevTools package is separate from the core, so it's **tree-shaken out of production** if you conditionally import it
 - Setting `debug: false` (or omitting it) disables event recording entirely

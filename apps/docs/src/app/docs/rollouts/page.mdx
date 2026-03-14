@@ -78,11 +78,11 @@ Target features to specific roles:
 features: {
   adminDashboard: {
     enabled: true,
-    roles: ['admin', 'superadmin'],
+    allowedRoles: ['admin', 'superadmin'],
   },
   betaFeature: {
     enabled: true,
-    roles: ['beta-tester'],
+    allowedRoles: ['beta-tester'],
   },
 }
 ```
@@ -95,11 +95,11 @@ Gate features by subscription tier:
 features: {
   advancedReports: {
     enabled: true,
-    plans: ['pro', 'enterprise'],
+    allowedPlans: ['pro', 'enterprise'],
   },
   apiAccess: {
     enabled: true,
-    plans: ['enterprise'],
+    allowedPlans: ['enterprise'],
   },
 }
 
@@ -116,11 +116,11 @@ const config = defineAccess({
   features: {
     debugTools: {
       enabled: true,
-      environments: ['development', 'staging'],
+      allowedEnvironments: ['development', 'staging'],
     },
     experimentalAPI: {
       enabled: true,
-      environments: ['staging'],
+      allowedEnvironments: ['staging'],
     },
   },
   environment: { name: process.env.NODE_ENV ?? 'development' },
@@ -135,9 +135,9 @@ Targeting conditions are **AND**-combined. All conditions must pass:
 features: {
   exclusiveFeature: {
     enabled: true,
-    roles: ['admin'],                      // AND user is admin
-    plans: ['enterprise'],                 // AND user is on enterprise
-    environments: ['production'],          // AND running in production
+    allowedRoles: ['admin'],                      // AND user is admin
+    allowedPlans: ['enterprise'],                 // AND user is on enterprise
+    allowedEnvironments: ['production'],          // AND running in production
     rolloutPercentage: 50,                 // AND in the 50% rollout bucket
   },
 }
