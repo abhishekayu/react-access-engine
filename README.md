@@ -1,6 +1,8 @@
 <div align="center">
-
-# react-access-engine
+  
+<img width="400" height="400" alt="Image" src="https://github.com/user-attachments/assets/6593ecec-b349-44f6-96d5-a3ff599dcd6b" />
+  
+# React Access Engine
 
 **Unified access control, feature flags, and policy engine for React.**
 
