@@ -1,6 +1,6 @@
 {
   "name": "react-access-engine-devtools",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Development-only devtools overlay for react-access-engine — visualize access decisions, feature flags, policies, and experiments in real time",
   "author": "Abhishek",
   "license": "MIT",

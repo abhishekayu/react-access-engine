@@ -1,6 +1,6 @@
 {
   "name": "react-access-engine",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Unified React-first access control, feature flags, and policy engine",
   "author": "Abhishek",
   "license": "MIT",
