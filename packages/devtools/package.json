@@ -1,6 +1,6 @@
 {
   "name": "react-access-engine-devtools",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "DevTools overlay for react-access-engine — inspect RBAC, ABAC, feature flags, A/B experiments, policies, and access decisions in real time. Zero-config debug panel for React.",
   "author": "Abhishek Verma",
   "license": "MIT",
