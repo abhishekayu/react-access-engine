@@ -6,104 +6,136 @@ export const metadata = {
 
 # DevTools
 
-The `react-access-engine-devtools` package provides a real-time debugging overlay for inspecting access checks, feature evaluations, policy traces, and configuration.
+The `react-access-engine-devtools` package provides a real-time debugging overlay for inspecting access checks, feature evaluations, policy traces, experiments, and user state.
 
 ## Installation
 
 ```bash
-npm install react-access-engine-devtools
+# npm
+npm install -D react-access-engine-devtools
+
+# pnpm
+pnpm add -D react-access-engine-devtools
+
+# yarn
+yarn add -D react-access-engine-devtools
 ```
 
 ## Setup
 
-Add the DevTools component inside your `<AccessProvider>`:
+Add the DevTools component inside your `<AccessProvider>` and enable `debug: true` in your config:
 
 ```tsx
-import { AccessProvider } from 'react-access-engine';
+import { AccessProvider, defineAccess } from 'react-access-engine';
 import { AccessDevtools } from 'react-access-engine-devtools';
+
+const config = defineAccess({
+  roles: ['admin', 'editor', 'viewer'] as const,
+  permissions: {
+    admin: ['*'] as const,
+    editor: ['articles:read', 'articles:write'] as const,
+    viewer: ['articles:read'] as const,
+  },
+  features: {
+    'dark-mode': { enabled: true },
+    'new-editor': { rolloutPercentage: 50 },
+  },
+  debug: true, // Required for event recording
+});
 
 function App() {
   return (
     <AccessProvider config={config} user={user}>
       <YourApp />
-      {process.env.NODE_ENV === 'development' && <AccessDevtools />}
+      {/* Only renders in development — zero cost in production */}
+      <AccessDevtools />
     </AccessProvider>
   );
 }
-```
-
-> **Important:** Enable `debug: true` in your config to record events for the DevTools:
-
-```tsx
-const config = defineAccess({
-  // ...
-  debug: true,
-});
 ```
 
 ## DevTools Panels
 
 The overlay includes 6 tabbed panels:
 
-### 1. Access Checks
+| Tab             | What it shows                                                  |
+| --------------- | -------------------------------------------------------------- |
+| **Overview**    | User ID, roles, permissions, plan, feature/experiment counts   |
+| **Access**      | Permission checks with granted/denied status and reasons       |
+| **Features**    | All feature flags with enabled/disabled state and reason codes |
+| **Policies**    | Policy evaluations with matched rules and effect               |
+| **Experiments** | Active experiments with assigned variants                      |
+| **Event Log**   | Combined chronological log of all events                       |
 
-Real-time log of all permission checks with:
+### Filtering
 
-- Permission name
-- User who requested access
-- Resource attributes (ABAC)
-- Result (allowed/denied)
-- Timestamp
+Every tab (except Overview) has a filter bar. Type to search by permission name, feature name, or reason code. The Event Log tab also has type filters (All / Access / Feature / Policy).
 
-### 2. Features
+## Props
 
-Live view of all feature flag evaluations:
+| Prop              | Type                                                           | Default          | Description                           |
+| ----------------- | -------------------------------------------------------------- | ---------------- | ------------------------------------- |
+| `position`        | `'bottom-right' \| 'bottom-left' \| 'top-right' \| 'top-left'` | `'bottom-right'` | Panel position                        |
+| `defaultOpen`     | `boolean`                                                      | `false`          | Start with panel open                 |
+| `shortcut`        | `string`                                                       | —                | Reserved for custom shortcut (future) |
+| `disableShortcut` | `boolean`                                                      | `false`          | Disable keyboard toggle               |
 
-- Feature name
-- Enabled/disabled status
-- Evaluation reason (static, rollout, role, plan, environment, dependency)
-- User context at evaluation time
+## Keyboard Shortcut
 
-### 3. Policies
+Toggle the panel with **Ctrl+Shift+A** (or **Cmd+Shift+A** on Mac).
 
-Policy engine trace showing:
+```tsx
+// Disable the shortcut
+<AccessDevtools disableShortcut />
+```
 
-- Permission being evaluated
-- Matched policy rule name
-- Rule effect (allow/deny)
-- Evaluation reason
+## Positioning
 
-### 4. Config
+Control where the overlay appears on screen:
 
-Full config snapshot viewer:
+```tsx
+<AccessDevtools position="bottom-right" /> {/* default */}
+<AccessDevtools position="bottom-left" />
+<AccessDevtools position="top-right" />
+<AccessDevtools position="top-left" />
+```
 
-- Current roles and permissions
-- Feature definitions
-- Experiment definitions
-- Policy rules
-- Plan hierarchy
+## Component Labels
 
-### 5. User
+Use `DebugLabel` to tag sections of your component tree. This makes devtools log entries easier to trace back to specific UI areas:
 
-Current user context inspector:
+```tsx
+import { DebugLabel } from 'react-access-engine-devtools';
 
-- User ID
-- Assigned roles
-- Current plan
-- User attributes
+function Sidebar() {
+  return (
+    <DebugLabel name="Sidebar">
+      <Can perform="settings:view">
+        <SettingsLink />
+      </Can>
+      <Can perform="admin:access">
+        <AdminLink />
+      </Can>
+    </DebugLabel>
+  );
+}
+```
 
-### 6. Experiments
+## Programmatic Control
 
-Experiment assignment overview:
+Toggle debug event collection at runtime without unmounting the overlay:
 
-- Experiment ID
-- Assigned variant
-- Active status
-- Allocation details
+```tsx
+import { enableDebug, disableDebug, isDebugEnabled } from 'react-access-engine-devtools';
+
+disableDebug(); // pause event collection
+enableDebug(); // resume event collection
+isDebugEnabled(); // check if collection is active
+```
 
 ## Debug Engine (Programmatic)
 
-For programmatic access to debug information:
+For programmatic access to debug information from the core package:
 
 ```tsx
 import { useAccessDebug } from 'react-access-engine';
@@ -143,8 +175,32 @@ engine.clear();
 
 The debug engine keeps a maximum of **100 entries per type** (FIFO), so it won't cause memory leaks in long-running applications.
 
+## Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│  Your App                                    │
+│  ┌────────────────────────────────────────┐  │
+│  │  <AccessProvider config={...} user={…}> │  │
+│  │    ┌──────────────┐                    │  │
+│  │    │  DebugEngine  │◄─── records events │  │
+│  │    │  PluginEngine │                    │  │
+│  │    └──────┬───────┘                    │  │
+│  │           │ subscribe()                │  │
+│  │    ┌──────▼───────────────────┐        │  │
+│  │    │  <AccessDevtools />       │        │  │
+│  │    │  ├─ useDevtoolsContext()  │        │  │
+│  │    │  ├─ useDebugLog()         │        │  │
+│  │    │  ├─ useDevtoolsSnapshot() │        │  │
+│  │    │  └─ Panel UI              │        │  │
+│  │    └──────────────────────────┘        │  │
+│  └────────────────────────────────────────┘  │
+└─────────────────────────────────────────────┘
+```
+
 ## Production Considerations
 
 - Only include `<AccessDevtools>` in **development builds**
 - The DevTools package is separate from the core, so it's **tree-shaken out of production** if you conditionally import it
 - Setting `debug: false` (or omitting it) disables event recording entirely
+- `AccessDevtools` renders `null` in production — zero cost

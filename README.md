@@ -309,7 +309,7 @@ When you need more detail than `useAccess()` provides:
 | `useExperiment(id)`              | `{ variant, active, experimentId }`           | Get experiment assignment           |
 | `usePlan()`                      | `{ plan, hasPlanAccess }`                     | Subscription plan checks            |
 | `useAccessDebug()`               | `AccessDebugInfo`                             | Debug metadata (when `debug: true`) |
-| `useAccessDebug()`               | `AccessDebugInfo`                             | Debug metadata (when `debug: true`) |
+| `useRemoteConfig(base, loader)`  | `{ config, loading, error, stale, refresh }`  | Remote config with SWR pattern      |
 
 ## Advanced Usage
 
@@ -412,12 +412,22 @@ if (hasPlanAccess('pro')) {
 Hook into every access decision for logging, analytics, or custom behavior:
 
 ```typescript
-import { createAuditLoggerPlugin, createAnalyticsPlugin } from 'react-access-engine';
+import {
+  createAuditLoggerPlugin,
+  createAnalyticsPlugin,
+  createOperatorPlugin,
+} from 'react-access-engine';
 
 // Built-in plugins — drop-in audit logging and analytics
 const auditPlugin = createAuditLoggerPlugin({
   logger: (entry) => fetch('/api/audit', { method: 'POST', body: JSON.stringify(entry) }),
 });
+
+// Custom condition operators for the ABAC condition engine
+const operatorPlugin = createOperatorPlugin([
+  { name: 'regex', evaluate: (value, pattern) => new RegExp(pattern).test(String(value)) },
+  { name: 'lengthGt', evaluate: (value, min) => String(value).length > Number(min) },
+]);
 
 // Custom plugin — e-commerce analytics
 const storePlugin = {
@@ -482,6 +492,79 @@ const debugInfo = useAccessDebug();
 console.log(debugInfo.lastChecks); // Recent permission checks
 console.log(debugInfo.lastFeatureEvals); // Recent feature evaluations
 ```
+
+### Remote Config
+
+Fetch access configuration from an API with stale-while-revalidate, polling, and optional signature verification:
+
+```tsx
+import { useRemoteConfig, AccessProvider, defineAccess } from 'react-access-engine';
+
+const baseConfig = defineAccess({
+  roles: ['viewer', 'editor', 'admin'],
+  permissions: { viewer: ['read'], editor: ['read', 'write'], admin: ['*'] },
+});
+
+function App() {
+  const { config, loading, error, stale, refresh } = useRemoteConfig(baseConfig, {
+    load: () => fetch('/api/access-config').then((r) => r.json()),
+    pollInterval: 60_000, // Re-fetch every 60s
+    signatureHeader: 'x-config-signature',
+    verifySignature: (payload, sig) => verify(payload, sig),
+  });
+
+  if (loading) return <Spinner />;
+
+  return (
+    <AccessProvider config={config} user={user}>
+      <YourApp />
+    </AccessProvider>
+  );
+}
+```
+
+For advanced use, the `RemoteConfigEngine` class is also exported for direct programmatic control.
+
+### Merging Configs
+
+Use `mergeConfigs` to combine a base config with overrides (e.g., remote patches, environment-specific tweaks):
+
+```typescript
+import { defineAccess, mergeConfigs } from 'react-access-engine';
+
+const base = defineAccess({
+  roles: ['viewer', 'admin'],
+  permissions: { viewer: ['read'], admin: ['*'] },
+});
+const overrides = { features: { 'new-ui': true } };
+
+const merged = mergeConfigs(base, overrides);
+// merged has all base config + new-ui feature added
+```
+
+### Condition Engine (Declarative ABAC)
+
+For declarative attribute-based conditions without writing callback functions, use the condition engine:
+
+```typescript
+import { evaluateConditions, buildConditionContext } from 'react-access-engine';
+
+const conditions = [
+  { field: 'user.role', operator: 'in' as const, value: ['admin', 'manager'] },
+  { field: 'resource.status', operator: 'equals' as const, value: 'draft' },
+];
+
+const context = buildConditionContext(
+  { role: 'admin', id: 'u1' },
+  { status: 'draft', ownerId: 'u1' },
+);
+
+const allowed = evaluateConditions(conditions, context); // true
+```
+
+Built-in operators: `equals`, `notEquals`, `in`, `notIn`, `includes`, `greaterThan`, `lessThan`, `greaterThanOrEqual`, `lessThanOrEqual`, `exists`.
+
+Add custom operators via the `createOperatorPlugin` plugin factory (see Plugin System above).
 
 ## Full E-commerce Example
 
@@ -793,24 +876,29 @@ Without `as const`, everything still works — you just get `string` instead of 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────┐
-│                 AccessProvider                    │
-│                                                  │
-│  ┌───────────┐ ┌────────────┐ ┌───────────────┐  │
-│  │ Role      │ │ Permission │ │ Policy Engine │  │
-│  │ Engine    │ │ Engine     │ │ (ABAC rules)  │  │
-│  └───────────┘ └────────────┘ └───────────────┘  │
-│                                                  │
-│  ┌───────────┐ ┌────────────┐ ┌───────────────┐  │
-│  │ Feature   │ │ Experiment │ │ Plan Engine   │  │
-│  │ Engine    │ │ Engine     │ │               │  │
-│  └───────────┘ └────────────┘ └───────────────┘  │
-│                                                  │
-│  ┌───────────┐ ┌────────────┐                    │
-│  │ Plugin    │ │ Debug      │                    │
-│  │ Engine    │ │ Engine     │                    │
-│  └───────────┘ └────────────┘                    │
-└──────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                      AccessProvider                          │
+│                                                              │
+│  ┌───────────┐ ┌────────────┐ ┌───────────────┐             │
+│  │ Role      │ │ Permission │ │ Policy Engine │             │
+│  │ Engine    │ │ Engine     │ │ (ABAC rules)  │             │
+│  └───────────┘ └────────────┘ └───────────────┘             │
+│                                                              │
+│  ┌───────────┐ ┌────────────┐ ┌───────────────┐             │
+│  │ Feature   │ │ Experiment │ │ Plan Engine   │             │
+│  │ Engine    │ │ Engine     │ │               │             │
+│  └───────────┘ └────────────┘ └───────────────┘             │
+│                                                              │
+│  ┌───────────┐ ┌────────────┐ ┌───────────────────────────┐ │
+│  │ Plugin    │ │ Debug      │ │ Condition Engine          │ │
+│  │ Engine    │ │ Engine     │ │ (declarative ABAC)        │ │
+│  └───────────┘ └────────────┘ └───────────────────────────┘ │
+│                                                              │
+│  ┌───────────────────────────┐                               │
+│  │ Remote Config Engine      │                               │
+│  │ (SWR + polling)           │                               │
+│  └───────────────────────────┘                               │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 Each engine is a pure function module. Unused engines are tree-shaken from bundles.
