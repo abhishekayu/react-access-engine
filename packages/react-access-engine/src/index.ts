@@ -75,6 +75,15 @@ export {
 } from './hooks';
 export type { UseRoleResult, UseFeatureResult, UsePolicyResult, UsePlanResult } from './hooks';
 
+// Engine functions (usable on backend / Node.js without React)
+export { hasRole, hasAnyRole, hasAllRoles, getPermissionsForUser } from './engines/role-engine';
+export { hasPermission, hasAnyPermission, hasAllPermissions } from './engines/permission-engine';
+export { evaluateFeature, evaluateAllFeatures } from './engines/feature-engine';
+export { evaluatePolicy } from './engines/policy-engine';
+export { assignExperiment } from './engines/experiment-engine';
+export { hasPlanAccess, getPlanTier } from './engines/plan-engine';
+export { PluginEngine } from './engines/plugin-engine';
+
 // Engine types (for advanced users / plugin authors)
 export type { FeatureEvalResult } from './engines/feature-engine';
 export type { PolicyEvalResult } from './engines/policy-engine';

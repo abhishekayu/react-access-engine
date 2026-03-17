@@ -1,22 +1,58 @@
 <div align="center">
   
-<img width="400" height="400" alt="Image" src="https://github.com/user-attachments/assets/6593ecec-b349-44f6-96d5-a3ff599dcd6b" />
+<img width="400" height="400" alt="React Access Engine — unified RBAC, ABAC, feature flags, and policy engine for React and Node.js" src="https://github.com/user-attachments/assets/6593ecec-b349-44f6-96d5-a3ff599dcd6b" />
   
 # React Access Engine
 
-**Unified access control, RBAC, ABAC, feature flags, experiments, and policy engine for React.**
+**Unified access control, RBAC, ABAC, feature flags, experiments, and policy engine for React.js, Next.js & Node.js.**
 
-React, RBAC, ABAC, authorization, permissions, feature flags, A/B testing, plan gating, remote config, SSR-safe
+One config. Frontend hooks + backend engine functions. Same logic everywhere.
+
+React.js, Next.js, Node.js, Express, RBAC, ABAC, authorization, permissions, feature flags, A/B testing, plan gating, remote config, SSR-safe, TypeScript, middleware, subscription
 
 [![npm version](https://img.shields.io/npm/v/react-access-engine?color=blue&label=npm)](https://www.npmjs.com/package/react-access-engine)
 [![minzipped size](https://img.shields.io/badge/minzipped-5.7_kB-blue)](https://bundlephobia.com/package/react-access-engine)
-[![tests](https://img.shields.io/badge/tests-220%20passing-brightgreen)](https://github.com/abhishekayu/react-access-engine)
+[![tests](https://img.shields.io/badge/tests-620%20passing-brightgreen)](https://github.com/abhishekayu/react-access-engine)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Documentation](https://react-access-engine.dev) · [Playground](https://react-access-engine.dev/playground) · [Examples](https://github.com/abhishekayu/react-access-engine/tree/main/examples)
+[Documentation](https://react-access-engine.dev/docs) · [Playground](https://react-access-engine.dev/playground) · [Examples](https://github.com/abhishekayu/react-access-engine/tree/main/examples)
 
 </div>
+
+---
+
+## Table of Contents
+
+- [Why?](#why)
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [API Reference](#api-reference)
+  - [useAccess() Hook](#useaccess--the-only-hook-you-need)
+  - [Allow Component](#allow--the-only-component-you-need)
+  - [Specialized Components](#specialized-components)
+  - [Specialized Hooks](#specialized-hooks)
+- [Advanced Usage](#advanced-usage)
+  - [Policy Engine (ABAC)](#policy-engine-abac)
+  - [Percentage Rollouts](#percentage-rollouts)
+  - [Feature Dependencies](#feature-dependencies)
+  - [Plan Gating](#subscriptionplan-gating)
+  - [Plugin System](#plugin-system)
+  - [Experiments / A/B Testing](#experiments--ab-testing)
+  - [Debug Mode](#debug-mode)
+  - [Remote Config](#remote-config)
+  - [Condition Engine](#condition-engine-declarative-abac)
+- [Full E-commerce Example](#full-e-commerce-example)
+- [SSR / Next.js](#ssr--nextjs)
+- [TypeScript](#typescript)
+- [Backend / Node.js Usage](#backend--nodejs-usage)
+- [Architecture](#architecture)
+- [Testing](#testing)
+- [Comparison](#comparison)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
 
 ---
 
@@ -37,20 +73,18 @@ tier('pro'); // check plan
 
 ## Features
 
-| Category              | What you get                                                                                             |
-| --------------------- | -------------------------------------------------------------------------------------------------------- |
-| **RBAC**              | Multi-role users, role → permission mapping, wildcard permissions (`*`, `namespace:*`)                   |
-| **ABAC**              | Attribute-based policies with composable allow/deny rules, priority ordering, custom condition operators |
-| **Feature Flags**     | Boolean toggles, percentage rollouts, role/plan/environment targeting, feature dependencies              |
-| **Experiments**       | A/B testing with deterministic variant assignment, SSR-safe hashing, allocation control                  |
-| **Plan Gating**       | Hierarchical subscription tiers with automatic comparison                                                |
-| **Remote Config**     | Fetch config from API with stale-while-revalidate, polling, and signature verification                   |
-| **Plugin System**     | Lifecycle hooks for audit logging, analytics, custom condition operators                                 |
-| **DevTools**          | Optional overlay for inspecting access decisions, feature evaluations, policy traces                     |
-| **Type Safety**       | Full TypeScript inference — `InferRoles`, `InferPermissions`, `InferFeatures` from config                |
-| **SSR-Ready**         | Deterministic evaluation, no `window`/`Math.random()`, works with Next.js App Router                     |
-| **Tree-Shakeable**    | Import only what you use — unused engines are eliminated at build time                                   |
-| **Zero Dependencies** | No runtime dependencies beyond React                                                                     |
+- **RBAC** — Multi-role users, role → permission mapping, wildcard permissions (`*`, `namespace:*`)
+- **ABAC** — Attribute-based policies with composable allow/deny rules and priority ordering
+- **Feature Flags** — Boolean toggles, percentage rollouts, role/plan/environment targeting, dependencies
+- **A/B Experiments** — Deterministic variant assignment, SSR-safe hashing, allocation control
+- **Plan Gating** — Hierarchical subscription tiers with automatic comparison
+- **Remote Config** — Fetch config from API with stale-while-revalidate, polling, signature verification
+- **Plugin System** — Lifecycle hooks for audit logging, analytics, custom condition operators
+- **DevTools** — Optional overlay for inspecting access decisions and policy traces
+- **Type Safety** — Full TypeScript inference — `InferRoles`, `InferPermissions`, `InferFeatures`
+- **SSR-Ready** — Deterministic evaluation, works with Next.js App Router
+- **Tree-Shakeable** — Import only what you use — unused engines are eliminated at build time
+- **Zero Dependencies** — No runtime dependencies beyond React
 
 ## Installation
 
@@ -155,8 +189,6 @@ function App() {
 ```
 
 ### 3. Use it
-
-**One hook — `useAccess()` — does everything:**
 
 ```tsx
 import { useAccess } from 'react-access-engine';
@@ -873,6 +905,306 @@ const config = defineAccess({
 
 Without `as const`, everything still works — you just get `string` instead of literal union types.
 
+## Backend / Node.js Usage
+
+The same `react-access-engine` package works on the backend. All engine functions are **pure logic** — no React dependency — so you can import them directly in Node.js, Express, Fastify, Deno, or any JavaScript runtime.
+
+```bash
+npm install react-access-engine
+```
+
+### Shared Config Pattern
+
+Define your access config **once** and share it between frontend and backend:
+
+```typescript
+// shared/access-config.ts — single source of truth
+import { defineAccess } from 'react-access-engine';
+
+export const accessConfig = defineAccess({
+  roles: ['viewer', 'editor', 'admin', 'super_admin'] as const,
+  permissions: {
+    viewer: ['articles:read', 'comments:read', 'dashboard:view'],
+    editor: ['articles:read', 'articles:write', 'articles:publish', 'comments:*', 'media:upload'],
+    admin: ['articles:*', 'comments:*', 'media:*', 'users:*', 'settings:*', 'analytics:*'],
+    super_admin: ['*'],
+  },
+  plans: ['free', 'starter', 'professional', 'enterprise'] as const,
+  features: {
+    dark_mode: true,
+    ai_assistant: { enabled: true, allowedRoles: ['admin', 'super_admin'] },
+    api_access: { enabled: true, allowedPlans: ['professional', 'enterprise'] },
+    beta_features: { enabled: true, allowedEnvironments: ['development', 'staging'] },
+  },
+  experiments: {
+    checkout_flow: {
+      id: 'checkout_flow',
+      variants: ['control', 'single_page', 'multi_step'] as const,
+      defaultVariant: 'control',
+      active: true,
+      allocation: { control: 34, single_page: 33, multi_step: 33 },
+    },
+  },
+  policies: [
+    {
+      id: 'owner-can-edit',
+      effect: 'allow',
+      permissions: ['articles:write'],
+      priority: 100,
+      condition: ({ user, resource }) => resource?.authorId === user.id,
+    },
+    {
+      id: 'deny-delete-published',
+      effect: 'deny',
+      permissions: ['articles:delete'],
+      priority: 90,
+      condition: ({ resource }) => resource?.status === 'published',
+    },
+  ],
+  environment: { name: 'production' },
+});
+
+export type AppRoles = (typeof accessConfig.roles)[number];
+```
+
+### Express API Example
+
+Import engine functions and use them in your route handlers — no middleware package needed:
+
+```typescript
+// server.ts
+import express from 'express';
+import {
+  hasPermission,
+  hasRole,
+  evaluateFeature,
+  evaluatePolicy,
+  assignExperiment,
+  hasPlanAccess,
+  getPlanTier,
+  getPermissionsForUser,
+  evaluateAllFeatures,
+} from 'react-access-engine';
+import type { UserContext } from 'react-access-engine';
+import { accessConfig } from './shared/access-config';
+
+const app = express();
+app.use(express.json());
+
+// Your auth middleware sets req.user
+app.use(async (req: any, _res, next) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  req.user = await getUserFromToken(token); // { id, roles, plan, attributes }
+  next();
+});
+```
+
+### Permission Guards (Middleware)
+
+```typescript
+// Reusable permission guard
+function requirePermission(...permissions: string[]) {
+  return (req: any, res: express.Response, next: express.NextFunction) => {
+    const user: UserContext = req.user;
+    if (!user) return res.status(401).json({ error: 'Not authenticated' });
+
+    for (const perm of permissions) {
+      if (!hasPermission(user, perm, accessConfig)) {
+        return res.status(403).json({ error: `Permission denied: ${perm}` });
+      }
+    }
+    next();
+  };
+}
+
+// Usage
+app.get('/api/articles', requirePermission('articles:read'), (req: any, res) => {
+  res.json({ articles: getAllArticles() });
+});
+
+app.post('/api/articles', requirePermission('articles:write'), (req: any, res) => {
+  res.status(201).json({ article: createArticle(req.body, req.user) });
+});
+
+app.delete('/api/articles/:id', requirePermission('articles:delete'), (req: any, res) => {
+  // Additional ABAC policy check
+  const article = getArticleById(req.params.id);
+  const policy = evaluatePolicy('articles:delete', req.user, accessConfig, { resource: article });
+
+  if (policy.effect === 'deny') {
+    return res.status(403).json({
+      error: 'Policy denied',
+      rule: policy.matchedRule,
+      reason: policy.reason,
+    });
+  }
+
+  deleteArticle(req.params.id);
+  res.json({ message: 'Deleted' });
+});
+```
+
+### Feature-Gated Endpoints
+
+```typescript
+app.get('/api/ai/suggest', (req: any, res) => {
+  const user: UserContext = req.user;
+  const feature = evaluateFeature('ai_assistant', user, accessConfig, accessConfig.environment);
+
+  if (!feature.enabled) {
+    return res.status(403).json({
+      error: 'AI Assistant not available for your account',
+      reason: feature.reason, // 'role', 'plan', 'rollout', etc.
+    });
+  }
+
+  res.json({ suggestions: generateAISuggestions(req.body) });
+});
+
+// Get all feature flags for current user (useful for frontend hydration)
+app.get('/api/features', (req: any, res) => {
+  const allFeatures = evaluateAllFeatures(req.user, accessConfig, accessConfig.environment);
+  res.json({
+    features: Array.from(allFeatures.entries()).map(([name, result]) => ({
+      name,
+      enabled: result.enabled,
+      reason: result.reason,
+    })),
+  });
+});
+```
+
+### Plan-Gated Endpoints
+
+```typescript
+app.get('/api/integrations', (req: any, res) => {
+  const user: UserContext = req.user;
+
+  if (!hasPlanAccess(user, 'professional', accessConfig)) {
+    return res.status(403).json({
+      error: 'Integrations require Professional plan or higher',
+      currentPlan: user.plan,
+      currentTier: getPlanTier(user, accessConfig),
+    });
+  }
+
+  res.json({ integrations: getAvailableIntegrations() });
+});
+```
+
+### ABAC Policy Evaluation in API
+
+```typescript
+app.post('/api/check/policy', (req: any, res) => {
+  const { permission, resource } = req.body;
+
+  const result = evaluatePolicy(permission, req.user, accessConfig, {
+    resource,
+    environment: accessConfig.environment,
+  });
+
+  res.json({
+    permission,
+    effect: result.effect, // 'allow' or 'deny'
+    matchedRule: result.matchedRule, // e.g. 'owner-can-edit'
+    reason: result.reason,
+  });
+});
+```
+
+### A/B Experiments on Backend
+
+```typescript
+app.get('/api/experiment/:id', (req: any, res) => {
+  const experiment = accessConfig.experiments?.[req.params.id];
+  if (!experiment) return res.status(404).json({ error: 'Experiment not found' });
+
+  const assignment = assignExperiment(experiment, req.user);
+  // assignment = { experimentId, variant, active }
+
+  res.json(assignment);
+});
+
+// Use experiments to vary API behavior
+app.get('/api/recommendations', (req: any, res) => {
+  const { variant } = assignExperiment(accessConfig.experiments.checkout_flow, req.user);
+
+  if (variant === 'single_page') {
+    return res.json({ layout: 'single', items: getCompactRecommendations() });
+  }
+  res.json({ layout: 'default', items: getFullRecommendations() });
+});
+```
+
+### Full User Access Snapshot
+
+```typescript
+// Return everything a frontend needs in one call
+app.get('/api/me/access', (req: any, res) => {
+  const user: UserContext = req.user;
+
+  res.json({
+    user: { id: user.id, roles: user.roles, plan: user.plan },
+    permissions: [...getPermissionsForUser(user, accessConfig)],
+    planTier: getPlanTier(user, accessConfig),
+    features: Array.from(evaluateAllFeatures(user, accessConfig).entries()).map(
+      ([name, result]) => ({ name, ...result }),
+    ),
+    experiments: Object.values(accessConfig.experiments ?? {}).map((exp) =>
+      assignExperiment(exp, user),
+    ),
+  });
+});
+```
+
+### Using Plugins on the Backend
+
+Plugins work identically on Node.js:
+
+```typescript
+import {
+  PluginEngine,
+  DebugEngine,
+  createAuditLoggerPlugin,
+  createAnalyticsPlugin,
+} from 'react-access-engine';
+
+// Initialize plugin engine
+const pluginEngine = new PluginEngine();
+pluginEngine.registerAll([
+  createAuditLoggerPlugin({
+    log: (entry) => auditService.write(entry),
+    deniedOnly: true,
+  }),
+  createAnalyticsPlugin({
+    adapter: { track: (name, props) => mixpanel.track(name, props) },
+  }),
+]);
+
+// Emit events from your route handlers
+app.get('/api/articles', (req: any, res) => {
+  const granted = hasPermission(req.user, 'articles:read', config);
+  pluginEngine.emitAccessCheck({
+    permission: 'articles:read',
+    granted,
+    roles: [...req.user.roles],
+    timestamp: Date.now(),
+  });
+  // ...
+});
+
+// Debug engine for audit trails
+const debugEngine = new DebugEngine();
+debugEngine.setConfig(config);
+debugEngine.recordAccessCheck({
+  permission: 'articles:read',
+  granted: true,
+  roles: ['admin'],
+  timestamp: Date.now(),
+});
+console.log(debugEngine.getDebugInfo()); // { lastChecks, lastFeatureEvals, lastPolicyEvals, configSnapshot, timestamp }
+```
+
 ## Architecture
 
 ```
@@ -902,6 +1234,29 @@ Without `as const`, everything still works — you just get `string` instead of 
 ```
 
 Each engine is a pure function module. Unused engines are tree-shaken from bundles.
+
+All engine functions exported for **backend / Node.js** use (no React dependency):
+
+- **Roles** — `hasRole`, `hasAnyRole`, `hasAllRoles`
+- **Permissions** — `hasPermission`, `hasAnyPermission`, `hasAllPermissions`, `getPermissionsForUser`
+- **Features** — `evaluateFeature`, `evaluateAllFeatures`
+- **Policies** — `evaluatePolicy`
+- **Experiments** — `assignExperiment`
+- **Plans** — `hasPlanAccess`, `getPlanTier`
+- **Conditions** — `evaluateCondition`, `evaluateConditions`, `buildConditionContext`
+- **Classes** — `PluginEngine`, `DebugEngine`
+
+## Testing
+
+**620 tests passing** across 18 test files covering every engine, hook, and component.
+
+```bash
+pnpm test
+```
+
+- **Engines (344)** — Role (33), Permission (43), Feature (54), Plan (27), Policy (44), Experiment (29), Condition (41), Plugin (25), Debug (14), Remote Config (56)
+- **React (181)** — Hooks (74), Components (107)
+- **Integration & Utils (95)** — Integration (12), Utilities (13), Plugin Integration (17), plus additional edge-case coverage
 
 ## Monorepo Structure
 
@@ -953,41 +1308,29 @@ pnpm --filter docs dev
 
 See [QUALITY.md](QUALITY.md) for test coverage details, rerender strategy, bundle size analysis, SSR safety, and the full QA checklist.
 
-### Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines. Quick version:
-
-1. Fork the repo and create a feature branch from `main`
-2. Run `pnpm install` and `pnpm build`
-3. Make your changes with tests
-4. Run `pnpm changeset` to describe your changes
-5. Submit a pull request
-
-All contributions — from bug reports to documentation to code — are welcome.
-
 ## Comparison
 
-| Feature              | react-access-engine | RBAC Library | Feature Flag Service | DIY |
-| -------------------- | :-----------------: | :----------: | :------------------: | :-: |
-| RBAC with wildcards  |         ✅          |      ✅      |          ❌          | ⚠️  |
-| ABAC / Policy engine |         ✅          |      ❌      |          ❌          | ⚠️  |
-| Feature flags        |         ✅          |      ❌      |          ✅          | ❌  |
-| A/B Experiments      |         ✅          |      ❌      |          ⚠️          | ❌  |
-| Plan gating          |         ✅          |      ❌      |          ❌          | ⚠️  |
-| Remote config        |         ✅          |      ❌      |          ✅          | ❌  |
-| Plugin system        |         ✅          |      ❌      |          ❌          | ❌  |
-| DevTools overlay     |         ✅          |      ❌      |          ⚠️          | ❌  |
-| SSR-safe (Next.js)   |         ✅          |      ⚠️      |          ⚠️          | ⚠️  |
-| Tree-shakeable       |         ✅          |      ✅      |          ❌          | ✅  |
-| Zero dependencies    |         ✅          |      ✅      |          ❌          | ✅  |
-| Type-safe inference  |         ✅          |      ❌      |          ❌          | ⚠️  |
+**vs. RBAC libraries** — adds ABAC policies, feature flags, A/B experiments, plan gating, remote config, plugins, and DevTools. Most RBAC libs only cover roles and permissions.
+
+**vs. Feature flag services** (LaunchDarkly, Unleash) — adds RBAC, ABAC, plan gating, and experiments in one zero-dependency package. No vendor lock-in, no external service, fully self-hosted.
+
+**vs. DIY** — type-safe, tested (620 tests), tree-shakeable, SSR-safe, with plugin system and DevTools. Replaces months of custom code with one `npm install`.
 
 ## Community
 
-- [Documentation](https://react-access-engine.dev)
+- [Documentation](https://react-access-engine.dev/docs)
+- [Playground](https://react-access-engine.dev/playground) — Try it live
 - [GitHub Discussions](https://github.com/abhishekayu/react-access-engine/discussions) — Questions & ideas
 - [Issue Tracker](https://github.com/abhishekayu/react-access-engine/issues) — Bug reports & feature requests
-- [Changelog](https://github.com/abhishekayu/react-access-engine/blob/main/packages/react-access-engine/CHANGELOG.md)
+- [Changelog](CHANGELOG.md)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Security
+
+To report a vulnerability, please see [SECURITY.md](SECURITY.md).
 
 ## Sponsors
 

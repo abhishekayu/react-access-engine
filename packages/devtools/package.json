@@ -1,6 +1,6 @@
 {
   "name": "react-access-engine-devtools",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "DevTools overlay for react-access-engine — inspect RBAC, ABAC, feature flags, A/B experiments, policies, and access decisions in real time. Zero-config debug panel for React.",
   "author": "Abhishek Verma",
   "license": "MIT",
@@ -19,6 +19,7 @@
   },
   "keywords": [
     "react",
+    "nextjs",
     "devtools",
     "developer-tools",
     "debug",
@@ -30,14 +31,18 @@
     "permissions",
     "feature-flags",
     "feature-toggles",
-    "a/b-testing",
+    "feature-toggle",
     "ab-testing",
+    "a-b-testing",
     "experiments",
     "policy-engine",
     "react-devtools",
     "debug-overlay",
+    "debug-panel",
     "inspector",
-    "typescript"
+    "typescript",
+    "ssr-safe",
+    "access-management"
   ],
   "type": "module",
   "main": "./dist/index.cjs",

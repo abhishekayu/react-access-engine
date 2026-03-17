@@ -1,6 +1,8 @@
 # react-access-engine-devtools
 
-Development-only debugging overlay for [react-access-engine](../react-access-engine). Visualize access decisions, feature flags, policies, experiments, and user state in real time.
+Development-only debugging overlay for [react-access-engine](https://www.npmjs.com/package/react-access-engine). Visualize RBAC, ABAC, feature flags, A/B experiments, policies, and access decisions in real time. Zero-config debug panel for React and Next.js.
+
+[Documentation](https://react-access-engine.dev/docs) · [Playground](https://react-access-engine.dev/playground) · [GitHub](https://github.com/abhishekayu/react-access-engine)
 
 ## Installation
 
@@ -128,6 +130,10 @@ isDebugEnabled(); // check status
 4. The overlay reads `AccessContext` directly (exported from the core package) to show the current user state, computed permissions, feature results, and experiment assignments.
 
 5. In production, `AccessDevtools` renders `null` — it's completely tree-shaken.
+
+## License
+
+[MIT](https://github.com/abhishekayu/react-access-engine/blob/main/LICENSE) © [Abhishek Verma](https://github.com/abhishekayu)
 
 ## Architecture
 
